@@ -50,7 +50,7 @@ const Navbar = () => {
             <button className="text-white hover:text-hover-sky"
               onClick={() => navigate("/register")}
             >
-              註冊
+              註冊1
             </button>
           </>
         ) : (
