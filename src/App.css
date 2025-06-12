@@ -32,7 +32,7 @@ html, body {
 
 /* === Navbar 樣式 === */
 nav {
-  background-color: #ffffff;
+
   border-bottom: 1px solid #dee2e6;
   padding: 1rem 2rem;
   display: flex;

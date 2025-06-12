@@ -66,7 +66,7 @@ const UploadArtwork = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      // 這裡呼叫你的圖片上傳接口
+      // 呼叫圖片上傳接口
       const res = await axios.post('/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data', 
           'Authorization': `Bearer ${token}`

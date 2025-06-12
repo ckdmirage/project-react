@@ -1,4 +1,4 @@
-
+//個人主頁
 
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -54,6 +54,29 @@ const UserPage = () => {
 
     }, [id]);
 
+    // 工具：輸出註冊時間差距（例如：2年3個月）
+    const getMembershipDuration = (createdDateStr) => {
+        const createdDate = new Date(createdDateStr);
+        const now = new Date();
+
+        const years = now.getFullYear() - createdDate.getFullYear();
+        const months = now.getMonth() - createdDate.getMonth();
+        const days = now.getDate() - createdDate.getDate();
+
+        let displayYears = years;
+        let displayMonths = months;
+        if (days < 0) displayMonths -= 1;
+        if (displayMonths < 0) {
+            displayYears -= 1;
+            displayMonths += 12;
+        }
+
+        let result = "";
+        if (displayYears > 0) result += `${displayYears} 年 `;
+        if (displayMonths > 0) result += `${displayMonths} 個月`;
+        return result || "不到一個月";
+    };
+
     if (loadingUser || loadingArtworks) return <div className="p-4">載入中...</div>;
     if (error) return <div className="p-4 text-red-500">{error}</div>;
     if (!user) return <div className="p-4">查無此用戶</div>;
@@ -63,7 +86,9 @@ const UserPage = () => {
             <h2 className="text-2xl font-bold mb-4">{user.username} 的主頁</h2>
             <div className="mb-2"><strong>用戶 ID：</strong>{user.id}</div>
             <div className="mb-2"><strong>信箱：</strong>{user.email}</div>
-            <div className="mb-2"><strong>註冊時間：</strong>{user.created}</div>
+            <div className="mb-2">
+                <strong>加入PicS：</strong>{getMembershipDuration(user.created)} 
+            </div>
 
             {/* 作品集嵌套區塊 */}
             <div className="mt-8">
@@ -73,10 +98,10 @@ const UserPage = () => {
                 ) : artworks.length === 0 ? (
                     <div>這個用戶還沒有發布任何作品</div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-wrap gap-4">
                         {artworks.map((artwork) => (
                             <div key={artwork.id} className="border rounded-lg p-2 shadow hover:shadow-lg transition"
-                            onClick={() => navigate(`/artwork/${artwork.id}`)} // 新增點擊跳轉
+                                onClick={() => navigate(`/artwork/${artwork.id}`)} // 新增點擊跳轉
                                 title="點擊查看作品">
                                 <div className="font-bold mb-1">{artwork.title}</div>
                                 <img

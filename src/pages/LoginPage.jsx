@@ -110,7 +110,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-mist-blue flex items-center justify-center">
+    <div className="min-h-screen bg-sky-blue flex items-center justify-center">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm">
         <h2 className="text-2xl font-bold text-center text-text-blue mb-6">用戶登入</h2>
         <form onSubmit={handleSubmit} className="space-y-4">

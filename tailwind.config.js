@@ -4,19 +4,15 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: ['bg-mist-blue','text-rice-white'],
   theme: {
     extend: {
       colors: {
-        'nav-bg': '#0f4c75',
-        'page-bg': '#F5FAFF',
-        'button-bg':'#0284c7',
-
-
-
-
-        'mist-blue': '#B4D9E4',
+        'sky-blue': '#D9F2F2',
+        'mist-blue': '#81C0C0',
         'text-blue': '#0e7490',
         'hover-blue': "#155e75",
+        'rice-white':'#FAF5F0'
       },
     },
   },
