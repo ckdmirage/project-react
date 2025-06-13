@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
+import Navbar from "./components/Navbar";
 
 import HomePage from "./pages/Homepage" // 主頁
 
@@ -10,6 +10,7 @@ import RegisterPage from "./pages/RegisterPage";
 import UploadArtwork from "./pages/UploadArtwork";
 import ArtworkDetailPage from './pages/ArtworkDetailPage';
 import UserPage from "./pages/UserPage";
+import TagArtworkPage from "./pages/TagArtworkPage";
 
 import { Link } from "react-router-dom";
 // import ProfilePage from "./pages/ProfilePage";
@@ -48,6 +49,9 @@ const App = () => {
 
           {/* 半完成: 瀏覽作品 */}
           <Route path="/artwork/:id" element={<ArtworkDetailPage />} />
+
+          {/* 半完成: 標籤瀏覽作品 */}
+          <Route path="/tag/:tagName" element={<TagArtworkPage />} />
 
           {/* 半完成: 瀏覽個人主頁 */}
           <Route path="/user/homepage/:id" element={<UserPage />} />

@@ -1,175 +1,104 @@
-
-
 import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"; // 愛心icon
+import { fetchArtworkById, deleteArtwork } from '../api/artworkApi';
+import LikeButton from "../components/LikeButton";
 
 const ArtworkDetailPage = () => {
-    const { id } = useParams();
-    const [artwork, setArtwork] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+  const { id } = useParams();
+  const [artwork, setArtwork] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-    const userCert = JSON.parse(sessionStorage.getItem("userCert"));
-    const token = userCert?.token;
+  const userCert = JSON.parse(sessionStorage.getItem("userCert"));
+  const token = userCert?.token;
 
+  useEffect(() => {
+    fetchArtworkById(id, token)
+      .then(res => {
+        setArtwork(res.data.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("無法取得作品資料");
+        setLoading(false);
+      });
+  }, [id, token]);
 
-    // --------- 新增點讚狀態和讚數
-    const [hasLiked, setHasLiked] = useState(false);
-    const [likeCount, setLikeCount] = useState(0);
-    const [likeLoading, setLikeLoading] = useState(false);
+  const handleDelete = async () => {
+    if (!window.confirm("確定要刪除這個作品嗎？")) return;
 
-    useEffect(() => {
-        axios.get(`http://localhost:8081/artwork/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true
-        })
-            .then((res) => {
-                setArtwork(res.data.data); //  ApiResponse 包裝
-                setLoading(false);
-            })
-            .catch((err) => {
-                setError("無法取得作品資料");
-                setLoading(false);
-            });
-    }, [id, token]);
+    try {
+      await deleteArtwork(artwork.id, token);
+      alert("刪除成功");
+      // 可選：navigate('/') 或其他
+    } catch (err) {
+      alert(err?.response?.data?.message || "刪除失敗");
+    }
+  };
 
+  if (loading) return <div className="p-4">載入中...</div>;
+  if (error) return <div className="p-4 text-red-500">{error}</div>;
+  if (!artwork) return <div className="p-4">沒有找到作品</div>;
 
-    // ---------- 查詢點讚狀態和讚數
-    useEffect(() => {
-        if (!userCert || !artwork) return;
-        // 查有沒有點過讚
-        axios.get(`http://localhost:8081/like/hasLiked/${artwork.id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true,
-        }).then(res => {
-            setHasLiked(res.data.data); // boolean
-        }).catch(() => {
-            setHasLiked(false);
-        });
+  return (
+    <div className="container p-4">
+      <div className="bg-sky-blue max-w-4xl mx-auto p-6 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold mb-4">{artwork.title}</h1>
 
-        // 查讚數
-        axios.get(`http://localhost:8081/like/count/${artwork.id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true,
-        }).then(res => {
-            setLikeCount(res.data.data); // 數字
-        }).catch(() => {
-            setLikeCount(0);
-        });
-    }, [artwork, userCert, token]);
+        <img
+          src={artwork.imageUrl}
+          alt={artwork.title}
+          className="w-full max-w-xl mx-auto mb-4 rounded"
+        />
 
-    const handleDelete = async () => {
-        if (!window.confirm("確定要刪除這個作品嗎？")) return;
+        <p className="mb-1">
+          <strong>作者：</strong>
+          <Link
+            to={`/user/homepage/${artwork.authorId}`}
+            className="text-blue-600 hover:underline"
+          >
+            {artwork.authorname ?? "未知作者"}
+          </Link>
+        </p>
 
-        const token = userCert.token; // 假設登入時有存 JWT
-        try {
-            const res = await fetch(`http://localhost:8081/artwork/${artwork.id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-            });
-            const result = await res.json();
-            if (res.ok) {
-                alert("刪除成功");
-                // 跳轉到其他頁面或刷新列表
-            } else {
-                alert(result.message || "刪除失敗");
-            }
-        } catch (e) {
-            alert("刪除時發生錯誤");
-        }
-    };
+        <p className="mb-1">
+          <strong>上傳時間：</strong>{new Date(artwork.uploaded).toLocaleString()}
+        </p>
 
-    // ---------- 處理點擊愛心
-    const handleLikeClick = async () => {
-        if (!userCert) {
-            alert("請先登入才能點讚");
-            return;
-        }
-        setLikeLoading(true);
-        try {
-            if (hasLiked) {
-                // 已經點過 -> 取消點讚
-                await axios.delete(`http://localhost:8081/like/${artwork.id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    withCredentials: true,
-                });
-                setHasLiked(false);
-                setLikeCount(likeCount - 1);
-            } else {
-                // 沒有點過 -> 點讚
-                await axios.post(`http://localhost:8081/like/${artwork.id}`, {}, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    withCredentials: true,
-                });
-                setHasLiked(true);
-                setLikeCount(likeCount + 1);
-            }
-        } catch (err) {
-            alert(err?.response?.data?.message || "操作失敗");
-        } finally {
-            setLikeLoading(false);
-        }
-    };
-
-    // 刪除功能原樣保留...
-
-    if (loading) return <div className="p-4">載入中...</div>;
-    if (error) return <div className="p-4 text-red-500">{error}</div>;
-    if (!artwork) return <div className="p-4">沒有找到作品</div>;
-
-    return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold mb-2">{artwork.title}</h1>
-            <img src={artwork.imageUrl} alt={artwork.title} className="w-full max-w-md mb-4" />
-            <p>
-                <strong>作者：</strong>
-                <Link
-                    to={`/user/homepage/${artwork.authorId}`}
-                    className="text-blue-500 hover:underline"
-                >
-                    {artwork.authorname ?? "未知作者"}
-                </Link>
-            </p>
-            <p><strong>上傳時間：</strong>{new Date(artwork.uploaded).toLocaleString()}</p>
-
-            {/* 愛心點讚區塊 */}
-            <div className="flex items-center gap-2 mt-2">
-                <button
-                    className="text-2xl focus:outline-none"
-                    disabled={likeLoading}
-                    onClick={handleLikeClick}
-                    title={hasLiked ? "取消點讚" : "點讚"}
-                >
-                    {hasLiked
-                        ? <AiFillHeart className="text-red-500" />
-                        : <AiOutlineHeart className="text-gray-400" />}
-                </button>
-                <span>{likeCount}</span>
-            </div>
-
-            <div className="mt-2">
-                <strong>標籤：</strong>
-                {artwork.tagNames && artwork.tagNames.length > 0 ? (
-                    <div className="flex flex-wrap gap-2 mt-1">
-                        {artwork.tagNames.map((tag, index) => (
-                            <span key={index} className="px-2 py-1 bg-gray-200 rounded">
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
-                ) : (
-                    <span>無</span>
-                )}
-                {userCert && userCert.userId === artwork.authorId && (
-                    <button onClick={handleDelete}>刪除作品</button>
-                )}
-            </div>
+        {/* 點讚功能 */}
+        <div className="mt-3 mb-3">
+          <LikeButton artworkId={artwork.id} authorId={artwork.authorId} />
         </div>
-    );
+
+        <div className="mb-2">
+          <strong>標籤：</strong>
+          {artwork.tagNames?.length > 0 ? (
+            <div className="flex flex-wrap gap-2 mt-1">
+              {artwork.tagNames.map((tag, index) => (
+                <span key={index} className="px-2 py-1 bg-white text-gray-700 rounded shadow-sm text-sm">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <span className="text-gray-500">無</span>
+          )}
+        </div>
+
+        {/* 刪除按鈕（只有作者才能看見） */}
+        {userCert?.userId === artwork.authorId && (
+          <div className="mt-6">
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            >
+              刪除作品
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default ArtworkDetailPage;

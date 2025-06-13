@@ -1,6 +1,6 @@
 // components/Navbar.jsx
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../img/logo.png";
+import logo from "../assets/img/logo.png";
 
 const Navbar = () => {
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
