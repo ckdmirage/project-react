@@ -2,26 +2,39 @@ import ArtworkCard from "./ArtworkCard";
 import SortSelector from "./SortSelector";
 import usePagination from "../hooks/usePagination";
 import useResponsiveItemsPerPage from "../hooks/useResponsiveItemsPerPage";
-import { sortArtworks } from "../utils/sortUtils";
-import { useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 
-const ArtworkList = ({ artworks }) => {
+const ArtworkList = ({ fetchFunction, fetchArgs = [], withToken = false }) => {
   const itemsPerPage = useResponsiveItemsPerPage();
-  const [sortType, setSortType] = useState("latest");
+  const [sortType, setSortType] = useState("newest");
+  const [artworks, setArtworks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // ✅ 排序邏輯
-  const sortedArtworks = useMemo(() => {
-    return sortArtworks(artworks, sortType);
-  }, [artworks, sortType]);
+  useEffect(() => {
+    setLoading(true);
 
-  // ✅ 分頁邏輯（帶入 sortType 作為 resetKey）
+    const userCert = JSON.parse(sessionStorage.getItem("userCert"));
+    const token = userCert?.token;
+
+    const fetcher = withToken
+      ? () => fetchFunction(...fetchArgs, token, sortType)
+      : () => fetchFunction(...fetchArgs, sortType);
+
+    fetcher()
+      .then((res) => {
+        setArtworks(res.data.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [sortType, ...fetchArgs]);
+
   const {
     currentPage,
     setCurrentPage,
     totalPages,
     currentItems,
     showPagination,
-  } = usePagination(sortedArtworks, itemsPerPage, sortType);
+  } = usePagination(artworks, itemsPerPage, sortType);
 
   return (
     <div className="bg-sky-blue p-6 mt-6 rounded-lg shadow-md">
@@ -30,28 +43,33 @@ const ArtworkList = ({ artworks }) => {
         <SortSelector sortOption={sortType} onChange={setSortType} />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {currentItems.map((artwork) => (
-          <ArtworkCard key={artwork.id} artwork={artwork} />
-        ))}
-      </div>
+      {loading ? (
+        <p>加載中...</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {currentItems.map((artwork) => (
+              <ArtworkCard key={artwork.id} artwork={artwork} />
+            ))}
+          </div>
 
-      {showPagination && (
-        <div className="flex justify-center mt-6 gap-2">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded border ${
-                currentPage === i + 1
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-800"
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
+          {showPagination && (
+            <div className="flex justify-center mt-6 gap-2">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`px-3 py-1 rounded border ${currentPage === i + 1
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-800"
+                    }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { registerUser } from "../api/userApi";
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -15,32 +16,20 @@ const RegisterPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();  //預交表單時阻止頁面刷新
+    e.preventDefault();
     const payload = {
       ...form,
-      created: new Date().toISOString(), // 對應 DTO 裡的 created 欄位
+      created: new Date().toISOString(),
     };
 
     try {
-      const response = await fetch('http://localhost:8081/user/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        credentials: "include"
-      });
+      const response = await registerUser(payload);
+      const result = response.data;
 
-      const result = await response.json(); // 回傳後端return的json物件
-
-      if (response.ok) {
-        setMessage(result.message); // 成功訊息
-      } else {
-        setMessage(result.message || '註冊失敗');
-      }
+      setMessage(result.message);
     } catch (err) {
-      console.error('錯誤:', err);
-      setMessage('無法連線到伺服器');
+      console.error("錯誤:", err);
+      setMessage(err.response?.data?.message || "註冊失敗");
     }
   };
 

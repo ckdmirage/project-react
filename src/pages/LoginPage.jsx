@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api/userApi";
 
 const LoginPage = () => {
   const [form, setForm] = useState({
@@ -15,32 +16,19 @@ const LoginPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('http://localhost:8081/user/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-        credentials: "include"
-      });
+  e.preventDefault();
+  try {
+    const response = await loginUser(form);
+    const result = response.data;
 
-      const result = await response.json();
-
-      if (response.ok) {
-        sessionStorage.setItem("userCert", JSON.stringify(result.data));
-        setMessage(result.message);
-        navigate("/");
-      } else {
-        setMessage(result.message || '登入失敗');
-      }
-
-    } catch (err) {
-      console.error('錯誤:', err);
-      setMessage('帳號或密碼錯誤');
-    }
-  };
+    sessionStorage.setItem("userCert", JSON.stringify(result.data));
+    setMessage(result.message);
+    navigate("/");
+  } catch (err) {
+    console.error("錯誤:", err);
+    setMessage(err.response?.data?.message || "帳號或密碼錯誤");
+  }
+};
 
   return (
     <div className="min-h-screen bg-sky-blue flex items-center justify-center">

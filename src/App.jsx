@@ -11,6 +11,7 @@ import UploadArtwork from "./pages/UploadArtwork";
 import ArtworkDetailPage from './pages/ArtworkDetailPage';
 import UserPage from "./pages/UserPage";
 import TagArtworkPage from "./pages/TagArtworkPage";
+import SearchResultPage from "./pages/SearchResultPage";
 
 import { Link } from "react-router-dom";
 // import ProfilePage from "./pages/ProfilePage";
@@ -47,14 +48,17 @@ const App = () => {
           {/* 已完成：上傳作品 */}
           <Route path="/upload" element={<UploadArtwork />} />
 
-          {/* 半完成: 瀏覽作品 */}
+          {/* 已完成: 瀏覽作品 */}
           <Route path="/artwork/:id" element={<ArtworkDetailPage />} />
 
-          {/* 半完成: 標籤瀏覽作品 */}
+          {/* 已完成: 標籤瀏覽作品 */}
           <Route path="/tag/:tagName" element={<TagArtworkPage />} />
 
-          {/* 半完成: 瀏覽個人主頁 */}
+          {/* 已完成: 瀏覽個人主頁 */}
           <Route path="/user/homepage/:id" element={<UserPage />} />
+
+          {/* 未完成 搜索頁 */}
+          <Route path="/search" element={<SearchResultPage />} />
 
 
           {/* 未實作功能先註解 */}

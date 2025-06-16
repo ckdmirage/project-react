@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { fetchUserInfo } from '../api/userApi';
 import { fetchArtworksByUser } from '../api/artworkApi';
 
+import ArtworkList from "../components/ArtworkList";
+
 import ArtworkCard from '../components/ArtworkCard';
 import useResponsiveItemsPerPage from "../hooks/useResponsiveItemsPerPage";
 import usePagination from "../hooks/usePagination";
@@ -28,40 +30,35 @@ const UserPage = () => {
     showPagination,
   } = usePagination(artworks, itemsPerPage);
 
+
   useEffect(() => {
     const userCert = JSON.parse(sessionStorage.getItem("userCert"));
     const token = userCert?.token;
 
-    if (!token) {
-      setError("請先登入!");
-      setLoadingUser(false);
-      setLoadingArtworks(false);
-      return;
-    }
-
-    // 取得用戶基本資料
+    // ✅ 無論有沒有登入，照樣 fetch 資料
     fetchUserInfo(id, token)
       .then(res => {
         setUser(res.data.data);
         setLoadingUser(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("❌ fetchUserInfo 錯誤", err);
         setError("無法取得用戶資訊");
         setLoadingUser(false);
       });
 
-    // 取得該用戶作品
     fetchArtworksByUser(id, token)
       .then(res => {
         setArtworks(res.data.data || []);
         setLoadingArtworks(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("❌ fetchArtworks 錯誤", err);
         setArtworks([]);
         setLoadingArtworks(false);
       });
-
   }, [id]);
+
 
   // 載入/錯誤/無資料處理
   if (loadingUser || loadingArtworks) return <div className="p-4">載入中...</div>;
@@ -79,34 +76,10 @@ const UserPage = () => {
         </div>
 
         {/* 作品展示區塊 */}
-        <div className="mt-8 bg-sky-blue p-6 rounded-lg shadow-md">
+        <div className="mt-8">
           <h3 className="text-xl font-semibold mb-4">他的作品集</h3>
-          {currentArtworks.length === 0 ? (
-            <div>這個用戶還沒有發布任何作品</div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {currentArtworks.map((artwork) => (
-                <ArtworkCard key={artwork.id} artwork={artwork} />
-              ))}
-            </div>
-          )}
+          <ArtworkList fetchFunction={fetchArtworksByUser} fetchArgs={[id]} withToken={true} />
 
-          {/* 分頁按鈕（只有多頁才顯示） */}
-          {showPagination && (
-            <div className="flex justify-center mt-6 gap-2">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 rounded border ${currentPage === i + 1
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-800"}`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </div>

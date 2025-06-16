@@ -32,7 +32,7 @@ const HomePage = () => {
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
-        <ArtworkList artworks={artworks} />
+        <ArtworkList fetchFunction={fetchAllArtworks} />
       )}
     </div>
   );

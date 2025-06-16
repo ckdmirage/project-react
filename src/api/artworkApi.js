@@ -3,8 +3,9 @@ import axios from "axios";
 const API_BASE = "http://localhost:8081";
 
 // 獲取所有作品     無須用戶身分
-export const fetchAllArtworks = () => {
-  return axios.get(`${API_BASE}/artwork/all`, {
+export const fetchAllArtworks = (sort = "newest") => {
+  return axios.get(`${API_BASE}/artwork`, {
+    params: { sort },
     withCredentials: false,
   });
 };
@@ -14,9 +15,10 @@ export const fetchAllArtworks = () => {
  * @param {string | number} userId
  * @param {string} token
  */
-export const fetchArtworksByUser = (userId, token) => {
+export const fetchArtworksByUser = (userId, token, sort = "newest") => {
   return axios.get(`${API_BASE}/artwork/user/${userId}`, {
     headers: { Authorization: `Bearer ${token}` },
+    params: { sort },
     withCredentials: true,
   });
 };
@@ -25,8 +27,9 @@ export const fetchArtworksByUser = (userId, token) => {
  * 根據標籤名稱獲取作品集
  * @param {string} tagName
  */
-export const fetchArtworksByTag = (tagName) => {
+export const fetchArtworksByTag = (tagName, sort = "newest") => {
   return axios.get(`${API_BASE}/artwork/tag/${tagName}`, {
+    params: { sort },
     withCredentials: false,
   });
 };

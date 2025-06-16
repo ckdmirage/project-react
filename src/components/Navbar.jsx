@@ -1,6 +1,7 @@
 // components/Navbar.jsx
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/img/logo.png";
+import SearchBar from "./SearchBar";
 
 const Navbar = () => {
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
@@ -39,6 +40,7 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center gap-1  text-xl">
+        <SearchBar />
         {userCert?.role === "admin" && (
 
           <button className="hover:text-hover-sky"
