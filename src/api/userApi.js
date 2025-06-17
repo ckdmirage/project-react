@@ -17,16 +17,17 @@ export const loginUser = async (loginData) => {
 };
 
 // ✅ 取得個人主頁資訊
-export const fetchUserInfo = (userId, token) => {
-  const config = {
-    withCredentials: true,
-  };
+export const fetchUserInfo = async (userId, token) => {
   if (token) {
-    config.headers = {
-      Authorization: `Bearer ${token}`,
-    };
+    return axios.get(`${API_BASE}/user/homepage/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
+  } else {
+    return axios.get(`${API_BASE}/user/homepage/${userId}`);
   }
-  return axios.get(`${API_BASE}/user/homepage/${userId}`, config);
 };
 
 

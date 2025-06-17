@@ -4,23 +4,34 @@ import usePagination from "../hooks/usePagination";
 import useResponsiveItemsPerPage from "../hooks/useResponsiveItemsPerPage";
 import { useEffect, useState } from "react";
 
-const ArtworkList = ({ fetchFunction, fetchArgs = [], withToken = false }) => {
+const ArtworkList = ({
+  fetchFunction,
+  fetchArgs = [],
+  artworks: providedArtworks,
+  showSorter = true,
+  showPagination = true,
+  title = "作品列表",
+}) => {
   const itemsPerPage = useResponsiveItemsPerPage();
   const [sortType, setSortType] = useState("newest");
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (providedArtworks) {
+      setArtworks(providedArtworks);
+      setLoading(false);
+      return;
+    }
+
+    if (!fetchFunction) {
+      console.warn("ArtworkList: 未提供 artworks 或 fetchFunction，無資料來源");
+      return;
+    }
+
     setLoading(true);
 
-    const userCert = JSON.parse(sessionStorage.getItem("userCert"));
-    const token = userCert?.token;
-
-    const fetcher = withToken
-      ? () => fetchFunction(...fetchArgs, token, sortType)
-      : () => fetchFunction(...fetchArgs, sortType);
-
-    fetcher()
+    fetchFunction(...fetchArgs, sortType)
       .then((res) => {
         setArtworks(res.data.data);
         setLoading(false);
@@ -33,14 +44,14 @@ const ArtworkList = ({ fetchFunction, fetchArgs = [], withToken = false }) => {
     setCurrentPage,
     totalPages,
     currentItems,
-    showPagination,
+    showPagination: shouldShowPagination,
   } = usePagination(artworks, itemsPerPage, sortType);
 
   return (
     <div className="bg-sky-blue p-6 mt-6 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold">作品列表</h3>
-        <SortSelector sortOption={sortType} onChange={setSortType} />
+        <h3 className="text-xl font-bold">{title}</h3>
+        {showSorter && <SortSelector sortOption={sortType} onChange={setSortType} />}
       </div>
 
       {loading ? (
@@ -53,16 +64,17 @@ const ArtworkList = ({ fetchFunction, fetchArgs = [], withToken = false }) => {
             ))}
           </div>
 
-          {showPagination && (
+          {showPagination && shouldShowPagination && (
             <div className="flex justify-center mt-6 gap-2">
               {Array.from({ length: totalPages }, (_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 rounded border ${currentPage === i + 1
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-800"
-                    }`}
+                  className={`px-3 py-1 rounded border ${
+                    currentPage === i + 1
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-gray-800"
+                  }`}
                 >
                   {i + 1}
                 </button>
@@ -74,5 +86,6 @@ const ArtworkList = ({ fetchFunction, fetchArgs = [], withToken = false }) => {
     </div>
   );
 };
+
 
 export default ArtworkList;

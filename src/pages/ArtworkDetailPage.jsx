@@ -2,6 +2,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchArtworkById, deleteArtwork } from '../api/artworkApi';
 import LikeButton from "../components/LikeButton";
+import TagList from '../components/TagList';
+import UserCard from "../components/UserCard";
 
 const ArtworkDetailPage = () => {
   const { id } = useParams();
@@ -30,7 +32,7 @@ const ArtworkDetailPage = () => {
     try {
       await deleteArtwork(artwork.id, token);
       alert("刪除成功");
-      // 可選：navigate('/') 或其他
+      // 可選：navigate('/')
     } catch (err) {
       alert(err?.response?.data?.message || "刪除失敗");
     }
@@ -42,60 +44,56 @@ const ArtworkDetailPage = () => {
 
   return (
     <div className="container p-4">
-      <div className="bg-sky-blue max-w-4xl mx-auto p-6 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold mb-4">{artwork.title}</h1>
+      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
+        {/* 左側：作品詳情 */}
+        <div className="md:col-span-2 bg-sky-blue p-6 rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold mb-4">{artwork.title}</h1>
 
-        <img
-          src={artwork.imageUrl}
-          alt={artwork.title}
-          className="w-full max-w-xl mx-auto mb-4 rounded"
-        />
+          <img
+            src={artwork.imageUrl}
+            alt={artwork.title}
+            className="w-full max-w-xl mx-auto mb-4 rounded"
+          />
 
-        <p className="mb-1">
-          <strong>作者：</strong>
-          <Link
-            to={`/user/homepage/${artwork.authorId}`}
-            className="text-blue-600 hover:underline"
-          >
-            {artwork.authorname ?? "未知作者"}
-          </Link>
-        </p>
+          <p className="mb-1">
+            <strong>作者：</strong>
+            <Link
+              to={`/user/homepage/${artwork.authorId}`}
+              className="text-blue-600 hover:underline"
+            >
+              {artwork.authorname ?? "未知作者"}
+            </Link>
+          </p>
 
-        <p className="mb-1">
-          <strong>上傳時間：</strong>{new Date(artwork.uploaded).toLocaleString()}
-        </p>
+          <p className="mb-1">
+            <strong>上傳時間：</strong>{new Date(artwork.uploaded).toLocaleString()}
+          </p>
 
-        {/* 點讚功能 */}
-        <div className="mt-3 mb-3">
-          <LikeButton artworkId={artwork.id} authorId={artwork.authorId} />
-        </div>
+          <div className="mt-3 mb-3">
+            <LikeButton artworkId={artwork.id} authorId={artwork.authorId} />
+          </div>
 
-        <div className="mb-2">
-          <strong>標籤：</strong>
-          {artwork.tagNames?.length > 0 ? (
-            <div className="flex flex-wrap gap-2 mt-1">
-              {artwork.tagNames.map((tag, index) => (
-                <span key={index} className="px-2 py-1 bg-white text-gray-700 rounded shadow-sm text-sm">
-                  {tag}
-                </span>
-              ))}
+          <div className="mb-2">
+            <strong>標籤：</strong>
+            <TagList tags={artwork.tagDtos} />
+          </div>
+
+          {userCert?.userId === artwork.authorId && (
+            <div className="mt-6">
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                刪除作品
+              </button>
             </div>
-          ) : (
-            <span className="text-gray-500">無</span>
           )}
         </div>
 
-        {/* 刪除按鈕（只有作者才能看見） */}
-        {userCert?.userId === artwork.authorId && (
-          <div className="mt-6">
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              刪除作品
-            </button>
-          </div>
-        )}
+        {/* 右側：作者小卡片 */}
+        <div>
+          <UserCard userId={artwork.authorId} />
+        </div>
       </div>
     </div>
   );

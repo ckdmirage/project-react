@@ -12,8 +12,9 @@ import ArtworkDetailPage from './pages/ArtworkDetailPage';
 import UserPage from "./pages/UserPage";
 import TagArtworkPage from "./pages/TagArtworkPage";
 import SearchResultPage from "./pages/SearchResultPage";
+import UserFollowPage from "./pages/UserFollowPage";
 
-import { Link } from "react-router-dom";
+
 // import ProfilePage from "./pages/ProfilePage";
 // import AdminPage from "./pages/AdminPage";
 
@@ -57,27 +58,14 @@ const App = () => {
           {/* 已完成: 瀏覽個人主頁 */}
           <Route path="/user/homepage/:id" element={<UserPage />} />
 
-          {/* 未完成 搜索頁 */}
+          {/* 已完成 搜索頁 */}
           <Route path="/search" element={<SearchResultPage />} />
 
+          {/* 未完成 追蹤粉絲頁 */}
+          <Route path="/user/follow/:id" element={<UserFollowPage />} />
 
-          {/* 未實作功能先註解 */}
-          {/* <Route
-          path="/profile"
-          element={
-            <RequireAuth roles={["USER", "ADMIN"]}>
-              <ProfilePage />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <RequireAuth roles={["ADMIN"]}>
-              <AdminPage />
-            </RequireAuth>
-          }
-        /> */}
+
+         
 
           {/* 兜底路由 */}
           <Route path="*" element={<Navigate to="/" replace />} />

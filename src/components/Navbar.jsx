@@ -29,30 +29,26 @@ const Navbar = () => {
         <Link to="/" >
           <img src={logo} alt="logo" style={{ height: '60px', width: 'auto' }} />
         </Link>
-
-        <button className="hover:text-hover-sky"
-          onClick={handleUpload}
-        >
-          上傳作品
-        </button>
-
-
-      </div>
-
-      <div className="flex items-center gap-1  text-xl">
-        <SearchBar />
+        {userCert ? (<>
+          <button className="hover:text-hover-sky"
+            onClick={handleUpload}
+          >
+            上傳作品
+          </button>
+        </>
+        ) : (<></>)}
         {userCert?.role === "admin" && (
-
           <button className="hover:text-hover-sky"
             onClick={() => navigate("/admin")}
           >
             管理介面
           </button>
-
-
         )}
       </div>
 
+      <div className="flex items-center gap-1  text-xl">
+        <SearchBar />
+      </div>
 
       {/* 右側：登入/註冊 或 使用者資訊 */}
       <div className="flex items-center  gap-2  text-xl">

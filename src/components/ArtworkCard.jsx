@@ -41,8 +41,8 @@ const ArtworkCard = ({ artwork }) => {
       )}
 
       <TagListResponsive
-        tags={artwork.tagNames}
-        toLink={(tag) => `/tag/${encodeURIComponent(tag)}`}
+        tags={artwork.tagDtos}
+        toLink={(tag) => `/tag/${encodeURIComponent(tag.name)}`}
         className="mt-2"
       />
     </div>
