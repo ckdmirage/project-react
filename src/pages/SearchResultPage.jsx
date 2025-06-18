@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { searchUsers, searchArtworks, searchTags } from "../api/searchApi";
 import TagList from "../components/TagList"
 import ArtworkList from "../components/ArtworkList";
+import UserCardList from "../components/UserCardList";
 
 const SearchResultPage = () => {
   const [params] = useSearchParams();
@@ -29,13 +30,7 @@ const SearchResultPage = () => {
       <section className="mb-8 bg-sky-blue p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-2">用戶</h2>
         {users.length > 0 ? (
-          <div className="space-y-2">
-            {users.map((u) => (
-              <div key={u.id} className="p-2 rounded bg-white shadow">
-                {u.username}
-              </div>
-            ))}
-          </div>
+          <UserCardList users={users} />
         ) : (
           <p className="text-gray-500 text-sm">沒有符合的用戶</p>
         )}
@@ -44,7 +39,7 @@ const SearchResultPage = () => {
       {/* 作品區塊 */}
       <section className="mb-8">
         {artworks.length > 0 ? (
-          <ArtworkList artworks={artworks} title="作品"/>
+          <ArtworkList artworks={artworks} title="作品" />
         ) : (
           <p className="text-gray-500 text-sm">沒有符合的作品</p>
         )}

@@ -21,29 +21,52 @@ const UserPage = () => {
   const isSelf = userCert?.userId === Number(id);
 
   useEffect(() => {
+    if (!id || id === "undefined") {
+      setError("無效的用戶 ID");
+      setLoading(false);
+      return;
+    }
+
     const token = userCert?.token;
 
-    Promise.all([
-      fetchUserInfo(id, token),
-      fetchArtworksByUser(id, token),
-      getFollowCounts(id)
-    ])
-      .then(([userRes, artworksRes, followCountRes]) => {
+    const loadData = async () => {
+      try {
+        const userRes = await fetchUserInfo(id, token);
         setUser(userRes.data.data);
-        setArtworks(artworksRes.data.data || []);
-
-        if (followCountRes.success) {
-          setFollowCounts(followCountRes.data);
-        }
-
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("❌ 資料載入錯誤", err);
+      } catch (err) {
+        console.error("取得使用者失敗：", err);
         setError("無法取得用戶資訊");
         setLoading(false);
-      });
+        return;
+      }
+
+      try {
+        const artworksRes = await fetchArtworksByUser(id, token);
+        setArtworks(artworksRes.data.data || []);
+      } catch (err) {
+        console.warn("使用者沒有作品或取得失敗，略過");
+        setArtworks([]); // ❗保證至少是空陣列
+      }
+
+      try {
+        const followCountRes = await getFollowCounts(id);
+        const rawCounts = followCountRes.data;
+        setFollowCounts({
+          follower: rawCounts.followerCount,
+          following: rawCounts.followingCount
+        });
+      } catch (err) {
+        console.warn("取得追蹤數失敗，設為 0");
+        setFollowCounts({ follower: 0, following: 0 });
+      }
+
+      setLoading(false);
+    };
+
+    loadData();
   }, [id]);
+
+
 
 
   if (loading) return <div className="p-4">載入中...</div>;
@@ -65,12 +88,16 @@ const UserPage = () => {
             </div>
 
             <div className="mt-8">
-              <ArtworkList
-                fetchFunction={fetchArtworksByUser}
-                fetchArgs={[id]}
-                withToken={true}
-                title='我的作品集'
-              />
+              {artworks.length === 0 ? (
+                <div className="text-gray-500 italic">你尚未發布任何作品</div>
+              ) : (
+                <ArtworkList
+                  fetchFunction={fetchArtworksByUser}
+                  fetchArgs={[id]}
+                  withToken={true}
+                  title="我的作品集"
+                />
+              )}
             </div>
           </>
         ) : (
@@ -85,13 +112,13 @@ const UserPage = () => {
                 to={`/user/follow/${user.id}?tab=followers`}
                 className="text-blue-600 hover:underline mr-4"
               >
-                {followCounts.follower} 人已追蹤
+                {followCounts.following} 人已追蹤
               </Link>
               <Link
                 to={`/user/follow/${user.id}?tab=following`}
                 className="text-blue-600 hover:underline"
               >
-                他的追蹤: {followCounts.following === 0 ? '無' : followCounts.following}
+                他的追蹤: {followCounts.follower === 0 ? '無' : followCounts.follower}
               </Link>
             </div>
 
@@ -101,11 +128,15 @@ const UserPage = () => {
             <div className="mb-2"><strong>加入時間：</strong>{getDuration(user.created)}</div>
 
             <div className="mt-8">
-              <ArtworkList
-                fetchFunction={fetchArtworksByUser}
-                fetchArgs={[id]}
-                title={`${user.username} 的作品集`}
-              />
+              {artworks.length === 0 ? (
+                <div className="text-gray-500 italic">該用戶尚未發布任何作品</div>
+              ) : (
+                <ArtworkList
+                  fetchFunction={fetchArtworksByUser}
+                  fetchArgs={[id]}
+                  title={`${user.username} 的作品集`}
+                />
+              )}
             </div>
           </>
         )}

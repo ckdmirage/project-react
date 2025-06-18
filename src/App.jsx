@@ -14,21 +14,6 @@ import TagArtworkPage from "./pages/TagArtworkPage";
 import SearchResultPage from "./pages/SearchResultPage";
 import UserFollowPage from "./pages/UserFollowPage";
 
-
-// import ProfilePage from "./pages/ProfilePage";
-// import AdminPage from "./pages/AdminPage";
-
-// 權限保護元件（尚未使用，先註解）
-// const RequireAuth = ({ children, roles }) => {
-//   const user = JSON.parse(sessionStorage.getItem("user"));
-//   if (!user) return <Navigate to="/login" replace />;
-//   if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
-//   return children;
-// };
-
-// 主頁元件，直接內嵌在 App 中
-
-
 const App = () => {
   return (
     <div>

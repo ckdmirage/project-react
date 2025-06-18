@@ -18,7 +18,7 @@ const ArtworkList = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (providedArtworks) {
+    if (providedArtworks && Array.isArray(providedArtworks)) {
       setArtworks(providedArtworks);
       setLoading(false);
       return;
@@ -33,7 +33,7 @@ const ArtworkList = ({
 
     fetchFunction(...fetchArgs, sortType)
       .then((res) => {
-        setArtworks(res.data.data);
+        setArtworks(res.data?.data || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -86,6 +86,5 @@ const ArtworkList = ({
     </div>
   );
 };
-
 
 export default ArtworkList;

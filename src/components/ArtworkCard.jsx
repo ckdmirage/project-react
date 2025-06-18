@@ -5,6 +5,8 @@ import TagListResponsive from "./TagListResponsive";
 const ArtworkCard = ({ artwork }) => {
   const navigate = useNavigate();
 
+  const author = artwork.author; // ⬅️ 新的結構
+
   return (
     <div
       className="bg-white shadow rounded p-2 w-full aspect-square flex flex-col justify-between hover:shadow-lg transition cursor-pointer"
@@ -24,18 +26,18 @@ const ArtworkCard = ({ artwork }) => {
         >
           {artwork.title}
         </h2>
-        <LikeButton artworkId={artwork.id} authorId={artwork.authorId} />
+        <LikeButton artworkId={artwork.id} authorId={author?.id} />
       </div>
 
-      {artwork.authorId && artwork.authorname && (
+      {author && (
         <p className="text-sm text-gray-500 mt-1">
           作者：
           <Link
-            to={`/user/homepage/${artwork.authorId}`}
+            to={`/user/homepage/${author.id}`}
             className="text-blue-500 hover:underline"
             onClick={(e) => e.stopPropagation()}
           >
-            {artwork.authorname}
+            {author.username}
           </Link>
         </p>
       )}

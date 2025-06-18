@@ -16,11 +16,16 @@ export const fetchAllArtworks = (sort = "newest") => {
  * @param {string} token
  */
 export const fetchArtworksByUser = (userId, token, sort = "newest") => {
-  return axios.get(`${API_BASE}/artwork/user/${userId}`, {
-    headers: { Authorization: `Bearer ${token}` },
+  const config = {
     params: { sort },
-    withCredentials: true,
-  });
+    withCredentials: !!token, // 有 token 才設為 true
+  };
+
+  if (token) {
+    config.headers = { Authorization: `Bearer ${token}` };
+  }
+
+  return axios.get(`${API_BASE}/artwork/user/${userId}`, config);
 };
 
 /**
@@ -40,10 +45,7 @@ export const fetchArtworksByTag = (tagName, sort = "newest") => {
  * @param {string} token
  */
 export const fetchArtworkById = (artworkId, token) => {
-  return axios.get(`${API_BASE}/artwork/${artworkId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    withCredentials: true,
-  });
+  return axios.get(`${API_BASE}/artwork/${artworkId}`);
 };
 
 /**

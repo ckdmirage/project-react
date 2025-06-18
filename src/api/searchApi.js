@@ -1,6 +1,13 @@
 // src/api/searchApi.js
 
+import axios from "axios";
+
 const BASE_URL = "http://localhost:8081/search";
+
+// 共用的 axios 寫法，保留 credentials（與 session/cookie 有關）
+const axiosWithCredentials = axios.create({
+  withCredentials: true,
+});
 
 /**
  * 搜尋使用者
@@ -8,12 +15,10 @@ const BASE_URL = "http://localhost:8081/search";
  * @returns {Promise<UserDto[]>}
  */
 export const searchUsers = async (keyword) => {
-  const res = await fetch(`${BASE_URL}/user?keyword=${encodeURIComponent(keyword)}`, {
-    method: "GET",
-    credentials: "include",
+  const res = await axiosWithCredentials.get(`${BASE_URL}/user`, {
+    params: { keyword },
   });
-  const data = await res.json();
-  return data.data;
+  return res.data.data;
 };
 
 /**
@@ -22,12 +27,10 @@ export const searchUsers = async (keyword) => {
  * @returns {Promise<ArtworkDisplayDto[]>}
  */
 export const searchArtworks = async (keyword) => {
-  const res = await fetch(`${BASE_URL}/artwork?keyword=${encodeURIComponent(keyword)}`, {
-    method: "GET",
-    credentials: "include",
+  const res = await axiosWithCredentials.get(`${BASE_URL}/artwork`, {
+    params: { keyword },
   });
-  const data = await res.json();
-  return data.data;
+  return res.data.data;
 };
 
 /**
@@ -36,10 +39,8 @@ export const searchArtworks = async (keyword) => {
  * @returns {Promise<TagDto[]>}
  */
 export const searchTags = async (keyword) => {
-  const res = await fetch(`${BASE_URL}/tag?keyword=${encodeURIComponent(keyword)}`, {
-    method: "GET",
-    credentials: "include",
+  const res = await axiosWithCredentials.get(`${BASE_URL}/tag`, {
+    params: { keyword },
   });
-  const data = await res.json();
-  return data.data;
+  return res.data.data;
 };

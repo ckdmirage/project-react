@@ -1,22 +1,22 @@
-import { Link, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { fetchArtworkById, deleteArtwork } from '../api/artworkApi';
+import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { fetchArtworkById, deleteArtwork } from "../api/artworkApi";
 import LikeButton from "../components/LikeButton";
-import TagList from '../components/TagList';
+import TagList from "../components/TagList";
 import UserCard from "../components/UserCard";
 
 const ArtworkDetailPage = () => {
   const { id } = useParams();
   const [artwork, setArtwork] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
   const token = userCert?.token;
 
   useEffect(() => {
     fetchArtworkById(id, token)
-      .then(res => {
+      .then((res) => {
         setArtwork(res.data.data);
         setLoading(false);
       })
@@ -42,6 +42,8 @@ const ArtworkDetailPage = () => {
   if (error) return <div className="p-4 text-red-500">{error}</div>;
   if (!artwork) return <div className="p-4">沒有找到作品</div>;
 
+  const author = artwork.author;
+
   return (
     <div className="container p-4">
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
@@ -57,20 +59,25 @@ const ArtworkDetailPage = () => {
 
           <p className="mb-1">
             <strong>作者：</strong>
-            <Link
-              to={`/user/homepage/${artwork.authorId}`}
-              className="text-blue-600 hover:underline"
-            >
-              {artwork.authorname ?? "未知作者"}
-            </Link>
+            {author ? (
+              <Link
+                to={`/user/homepage/${author.id}`}
+                className="text-blue-600 hover:underline"
+              >
+                {author.username}
+              </Link>
+            ) : (
+              <span className="text-gray-500">未知作者</span>
+            )}
           </p>
 
           <p className="mb-1">
-            <strong>上傳時間：</strong>{new Date(artwork.uploaded).toLocaleString()}
+            <strong>上傳時間：</strong>
+            {new Date(artwork.uploaded).toLocaleString()}
           </p>
 
           <div className="mt-3 mb-3">
-            <LikeButton artworkId={artwork.id} authorId={artwork.authorId} />
+            <LikeButton artworkId={artwork.id} authorId={author?.id} />
           </div>
 
           <div className="mb-2">
@@ -78,7 +85,7 @@ const ArtworkDetailPage = () => {
             <TagList tags={artwork.tagDtos} />
           </div>
 
-          {userCert?.userId === artwork.authorId && (
+          {userCert?.userId === author?.id && (
             <div className="mt-6">
               <button
                 onClick={handleDelete}
@@ -92,7 +99,7 @@ const ArtworkDetailPage = () => {
 
         {/* 右側：作者小卡片 */}
         <div>
-          <UserCard userId={artwork.authorId} />
+          <UserCard user={author} />
         </div>
       </div>
     </div>
