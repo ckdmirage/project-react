@@ -18,26 +18,30 @@ const ArtworkList = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (providedArtworks && Array.isArray(providedArtworks)) {
-      setArtworks(providedArtworks);
+  if (providedArtworks) {
+    setArtworks(providedArtworks);
+    setLoading(false);
+    return;
+  }
+
+  if (!fetchFunction) {
+    console.warn("ArtworkList: 未提供 artworks 或 fetchFunction，無資料來源");
+    return;
+  }
+
+  setLoading(true);
+  fetchFunction(...fetchArgs, sortType)
+    .then((res) => {
+      setArtworks(res.data?.data || []);
+    })
+    .catch((err) => {
+      console.error("載入 artwork 發生錯誤：", err);
+    })
+    .finally(() => {
       setLoading(false);
-      return;
-    }
+    });
+}, [sortType, ...fetchArgs]);
 
-    if (!fetchFunction) {
-      console.warn("ArtworkList: 未提供 artworks 或 fetchFunction，無資料來源");
-      return;
-    }
-
-    setLoading(true);
-
-    fetchFunction(...fetchArgs, sortType)
-      .then((res) => {
-        setArtworks(res.data?.data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [sortType, ...fetchArgs]);
 
   const {
     currentPage,

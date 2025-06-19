@@ -22,16 +22,18 @@ export const searchUsers = async (keyword) => {
 };
 
 /**
- * 搜尋作品
+ * 搜尋作品（支援排序）
  * @param {string} keyword
+ * @param {string} sort
  * @returns {Promise<ArtworkDisplayDto[]>}
  */
-export const searchArtworks = async (keyword) => {
+export const searchArtworks = async (keyword, sort = "newest") => {
   const res = await axiosWithCredentials.get(`${BASE_URL}/artwork`, {
-    params: { keyword },
+    params: { keyword, sort },
   });
   return res.data.data;
 };
+
 
 /**
  * 搜尋標籤

@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { searchUsers, searchArtworks, searchTags } from "../api/searchApi";
-import TagList from "../components/TagList"
+import TagList from "../components/TagList";
 import ArtworkList from "../components/ArtworkList";
 import UserCardList from "../components/UserCardList";
 
@@ -10,14 +10,14 @@ const SearchResultPage = () => {
   const keyword = params.get("keyword") || "";
 
   const [users, setUsers] = useState([]);
-  const [artworks, setArtworks] = useState([]);
   const [tags, setTags] = useState([]);
 
   useEffect(() => {
     if (!keyword.trim()) return;
+
     searchUsers(keyword).then(setUsers);
-    searchArtworks(keyword).then(setArtworks);
     searchTags(keyword).then(setTags);
+    // ❌ 不再在這裡 fetch artworks，由 ArtworkList 自己根據 keyword 和 sort 處理
   }, [keyword]);
 
   return (
@@ -36,32 +36,29 @@ const SearchResultPage = () => {
         )}
       </section>
 
-      {/* 作品區塊 */}
+      {/* 作品區塊 - 傳 fetchFunction 和 fetchArgs */}
       <section className="mb-8">
-        {artworks.length > 0 ? (
-          <ArtworkList artworks={artworks} title="作品" />
-        ) : (
-          <p className="text-gray-500 text-sm">沒有符合的作品</p>
-        )}
+        <ArtworkList
+          title="作品"
+          fetchFunction={searchArtworks}
+          fetchArgs={[keyword]} // 傳入 keyword 給 ArtworkList 處理排序
+        />
       </section>
-
 
       {/* 標籤區塊 */}
       <section className="mb-8 bg-sky-blue p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-2">標籤</h2>
         {tags.length > 0 ? (
           <TagList
-            tags={tags} // 傳入原始 tag DTO 陣列，如 { id, name }
-            toLink={(tag) => `/tag/${tag.name}`} // 點擊跳轉至 tag 頁面
+            tags={tags}
+            toLink={(tag) => `/tag/${tag.name}`}
           />
         ) : (
           <p className="text-gray-500 text-sm">沒有符合的標籤</p>
         )}
-
       </section>
     </div>
   );
-
 };
 
 export default SearchResultPage;
