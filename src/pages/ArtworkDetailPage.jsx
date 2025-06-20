@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchArtworkById, deleteArtwork } from "../api/artworkApi";
+import { fetchUserInfo } from "../api/userApi"; // ✅ 別忘記引入這個
 import LikeButton from "../components/LikeButton";
 import TagList from "../components/TagList";
 import UserCard from "../components/UserCard";
@@ -8,12 +9,14 @@ import UserCard from "../components/UserCard";
 const ArtworkDetailPage = () => {
   const { id } = useParams();
   const [artwork, setArtwork] = useState(null);
+  const [authorFull, setAuthorFull] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
   const token = userCert?.token;
 
+  // ✅ 初次載入 artwork
   useEffect(() => {
     fetchArtworkById(id, token)
       .then((res) => {
@@ -26,13 +29,27 @@ const ArtworkDetailPage = () => {
       });
   }, [id, token]);
 
+  // ✅ 根據 artwork.author.id 再載入完整作者資料
+  useEffect(() => {
+    if (artwork?.author?.id) {
+      fetchUserInfo(artwork.author.id, token)
+        .then((res) => {
+          setAuthorFull(res.data.data);
+        })
+        .catch(() => {
+          console.warn("作者資料補充失敗");
+          setAuthorFull(null);
+        });
+    }
+  }, [artwork, token]);
+
   const handleDelete = async () => {
     if (!window.confirm("確定要刪除這個作品嗎？")) return;
 
     try {
       await deleteArtwork(artwork.id, token);
       alert("刪除成功");
-      // 可選：navigate('/')
+      // 可選導回首頁或其他頁
     } catch (err) {
       alert(err?.response?.data?.message || "刪除失敗");
     }
@@ -42,7 +59,7 @@ const ArtworkDetailPage = () => {
   if (error) return <div className="p-4 text-red-500">{error}</div>;
   if (!artwork) return <div className="p-4">沒有找到作品</div>;
 
-  const author = artwork.author;
+  const author = authorFull || artwork.author;
 
   return (
     <div className="container p-4">

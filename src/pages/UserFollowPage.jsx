@@ -8,7 +8,6 @@ const UserFollowPage = () => {
   const { id } = useParams();
   const [params, setParams] = useSearchParams();
   const tab = params.get("tab") || "followers";
-
   const [followers, setFollowers] = useState([]);
   const [followings, setFollowings] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
@@ -37,6 +36,7 @@ const UserFollowPage = () => {
         setFollowings(sorted);
       }
     });
+    
   }, [id]);
 
 

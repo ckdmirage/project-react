@@ -1,38 +1,21 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { hasLiked, likeArtwork, unlikeArtwork } from "../api/likeApi";
 
-const API_BASE = "http://localhost:8081";
-
-const LikeButton = ({ artworkId, authorId }) => {
+const LikeButton = ({ artworkId, authorId, initialLikeCount = 0 }) => {
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
   const token = userCert?.token;
 
-  const [hasLiked, setHasLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [hasLikedState, setHasLikedState] = useState(false);
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [likeLoading, setLikeLoading] = useState(false);
 
   useEffect(() => {
-    if (!artworkId) return;
+    if (!artworkId || !token) return;
 
-    // 查點讚數
-    axios
-      .get(`${API_BASE}/like/count/${artworkId}`)
-      .then((res) => setLikeCount(res.data.data))
-      .catch(() => setLikeCount(0))
-      .finally(() => setLoading(false));
-
-    // 查是否已點讚
-    if (token) {
-      axios
-        .get(`${API_BASE}/like/hasLiked/${artworkId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        })
-        .then((res) => setHasLiked(res.data.data))
-        .catch(() => setHasLiked(false)); // 不提示錯誤，但 fallback false
-    }
+    hasLiked(artworkId, token)
+      .then((res) => setHasLikedState(res.data.data))
+      .catch(() => setHasLikedState(false)); // fallback false
   }, [artworkId, token]);
 
   const handleLikeClick = async () => {
@@ -48,19 +31,13 @@ const LikeButton = ({ artworkId, authorId }) => {
 
     setLikeLoading(true);
     try {
-      if (hasLiked) {
-        await axios.delete(`${API_BASE}/like/${artworkId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
-        setHasLiked(false);
+      if (hasLikedState) {
+        await unlikeArtwork(artworkId, token);
+        setHasLikedState(false);
         setLikeCount((prev) => prev - 1);
       } else {
-        await axios.post(`${API_BASE}/like/${artworkId}`, {}, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
-        setHasLiked(true);
+        await likeArtwork(artworkId, token);
+        setHasLikedState(true);
         setLikeCount((prev) => prev + 1);
       }
     } catch (err) {
@@ -69,8 +46,6 @@ const LikeButton = ({ artworkId, authorId }) => {
       setLikeLoading(false);
     }
   };
-
-  if (loading) return null;
 
   return (
     <div className="flex items-center gap-1">
@@ -81,9 +56,9 @@ const LikeButton = ({ artworkId, authorId }) => {
           e.stopPropagation();
           handleLikeClick();
         }}
-        title={hasLiked ? "取消點讚" : "點讚"}
+        title={hasLikedState ? "取消點讚" : "點讚"}
       >
-        {hasLiked ? (
+        {hasLikedState ? (
           <AiFillHeart className="text-red-500" />
         ) : (
           <AiOutlineHeart className="text-gray-400" />
