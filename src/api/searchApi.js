@@ -22,17 +22,25 @@ export const searchUsers = async (keyword) => {
 };
 
 /**
- * 搜尋作品（支援排序）
+ * 搜尋作品（支援排序與 token）
  * @param {string} keyword
  * @param {string} sort
+ * @param {string|null} token
  * @returns {Promise<ArtworkDisplayDto[]>}
  */
-export const searchArtworks = async (keyword, sort = "newest") => {
-  const res = await axiosWithCredentials.get(`${BASE_URL}/artwork`, {
+export const searchArtworks = async (keyword, sort = "newest", token = null) => {
+  const config = {
     params: { keyword, sort },
-  });
-  return res.data.data;
+    withCredentials: true,
+    ...(token && {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+  };
+  return axios.get(`${BASE_URL}/artwork`, config); // 不要解構 data
 };
+
 
 
 /**

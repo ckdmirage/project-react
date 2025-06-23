@@ -42,7 +42,10 @@ const FollowButton = ({ targetUserId }) => {
   }, [targetUserId, token]);
 
   const handleClick = async () => {
-    if (!token || actionPending) return;
+    if (!token) {
+      alert("請先登入才能追蹤他人！");
+      return;
+    }
 
     setActionPending(true);
     try {
@@ -86,9 +89,8 @@ const FollowButton = ({ targetUserId }) => {
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
       disabled={actionPending}
-      className={`${baseClass} ${isFollowing ? followingClass : followClass} ${
-        actionPending ? "opacity-50 cursor-not-allowed" : ""
-      }`}
+      className={`${baseClass} ${isFollowing ? followingClass : followClass} ${actionPending ? "opacity-50 cursor-not-allowed" : ""
+        }`}
     >
       {btnText}
     </button>

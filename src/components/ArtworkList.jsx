@@ -3,7 +3,6 @@ import SortSelector from "./SortSelector";
 import usePagination from "../hooks/usePagination";
 import useResponsiveItemsPerPage from "../hooks/useResponsiveItemsPerPage";
 import { useEffect, useState } from "react";
-import { getLikeCounts } from "../api/likeApi";
 
 const ArtworkList = ({
   fetchFunction,
@@ -16,35 +15,28 @@ const ArtworkList = ({
   const itemsPerPage = useResponsiveItemsPerPage();
   const [sortType, setSortType] = useState("newest");
   const [artworks, setArtworks] = useState([]);
-  const [likeCounts, setLikeCounts] = useState({});
   const [loading, setLoading] = useState(true);
+  useEffect(() => {
 
+}, [artworks]);
   useEffect(() => {
     if (providedArtworks) {
       setArtworks(providedArtworks);
       setLoading(false);
       return;
     }
-
     if (!fetchFunction) {
       console.warn("ArtworkList: 未提供 artworks 或 fetchFunction");
       return;
     }
-
     const userCert = JSON.parse(sessionStorage.getItem("userCert"));
     const token = userCert?.token;
-
     setLoading(true);
-    fetchFunction(...fetchArgs, sortType)
+    fetchFunction(...fetchArgs, sortType, token)//token, sortType, ...fetchArgs
       .then((res) => {
         const fetched = res.data?.data || [];
+        console.log("✅ fetched: ", fetched.map(a => `${a.title} ❤️${a.likes}`));
         setArtworks(fetched);
-
-        // ✅ 傳入 token 取得 Like 數
-        const ids = fetched.map((a) => a.id);
-        return getLikeCounts(ids, token).then((res) => {
-          setLikeCounts(res.data.data || {});
-        });
       })
       .catch((err) => {
         console.error("載入 artwork 發生錯誤：", err);
@@ -78,7 +70,7 @@ const ArtworkList = ({
               <ArtworkCard
                 key={artwork.id}
                 artwork={artwork}
-                likeCount={likeCounts[artwork.id] || 0}
+                likeCount={artwork.likes ?? 0} // ✅ 不再從 likeCounts map 拿，而是直接用 artwork.likes
               />
             ))}
           </div>

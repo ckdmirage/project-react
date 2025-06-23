@@ -3,9 +3,9 @@ import axios from "axios";
 const API_BASE = "http://localhost:8081/like";
 
 // ✅ 查點讚數
-export const getLikeCount = (artworkId) =>
-    axios.get(`${API_BASE}/count/${artworkId}`);
-
+//export const getLikeCount = (artworkId) =>
+//    axios.get(`${API_BASE}/count/${artworkId}`);
+//
 // ✅ 查是否已點讚
 export const hasLiked = (artworkId, token) =>
     axios.get(`${API_BASE}/hasLiked/${artworkId}`, {

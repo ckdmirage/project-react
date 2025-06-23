@@ -41,8 +41,9 @@ const SearchResultPage = () => {
         <ArtworkList
           title="作品"
           fetchFunction={searchArtworks}
-          fetchArgs={[keyword]} // 傳入 keyword 給 ArtworkList 處理排序
+          fetchArgs={[keyword]} // ✅ 這樣就可以
         />
+
       </section>
 
       {/* 標籤區塊 */}

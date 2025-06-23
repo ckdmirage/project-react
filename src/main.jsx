@@ -8,7 +8,7 @@ axios.defaults.baseURL = "http://localhost:8081";
 axios.defaults.withCredentials = true; // 如果你有處理 cookie 或 session
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+
     <App />
-  </StrictMode>,
+
 )

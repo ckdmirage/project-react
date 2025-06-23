@@ -16,9 +16,11 @@ const UserCardList = ({ users = [] }) => {
     }, [users]);
     return (
         <div className="space-y-4">
-            {currentUsers.map((user) => (
-                <UserCard key={user.id} user={user} />
-            ))}
+            {currentUsers
+                .filter(user => user && user.id !== undefined) // 🔐 避免空值或無效資料
+                .map((user) => (
+                    <UserCard key={user.id} user={user} />
+                ))}
 
             {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-4 mt-4">

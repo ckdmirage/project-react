@@ -1,14 +1,12 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-
 import { fetchUserInfo } from '../api/userApi';
 import { fetchArtworksByUser } from '../api/artworkApi';
 import { getFollowCounts } from '../api/followApi';
-
 import FollowButton from "../components/FollowButton";
 import ArtworkList from "../components/ArtworkList";
 import { getDuration } from '../utils/dateUtils';
-
+import { fetchMyFavourites } from "../api/favouriteApi";
 
 const UserPage = () => {
   const { id } = useParams();
@@ -98,6 +96,18 @@ const UserPage = () => {
                   title="我的作品集"
                 />
               )}
+            </div>
+            <div className="mt-8">
+              
+                <div className="mt-12">
+                  <ArtworkList
+                    fetchFunction={fetchMyFavourites}
+                    fetchArgs={[]}
+                    withToken={true}
+                    title="我的收藏"
+                  />
+                </div>
+              
             </div>
           </>
         ) : (

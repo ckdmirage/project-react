@@ -14,16 +14,18 @@ const UserFollowPage = () => {
 
   useEffect(() => {
     if (!id || id === "undefined") return;
-
     fetchUserInfo(id).then(res => {
       if (res?.status === 200) setUserInfo(res.data.data);
     });
-
     getUserFollowers(id).then(res => {
       if (res?.status === 200) {
         const sorted = res.data
-          .sort((a, b) => new Date(b.time) - new Date(a.time))
-          .map(d => d.userDto);
+          .filter(d => d && d.userId)
+          .map(user => ({
+            ...user,
+            id: user.userId, 
+          }))
+          .sort((a, b) => new Date(b.created) - new Date(a.created));
         setFollowers(sorted);
       }
     });
@@ -31,12 +33,15 @@ const UserFollowPage = () => {
     getUserFollowings(id).then(res => {
       if (res?.status === 200) {
         const sorted = res.data
-          .sort((a, b) => new Date(b.time) - new Date(a.time))
-          .map(d => d.userDto);
+          .filter(d => d && d.userId) 
+          .map(user => ({
+            ...user,
+            id: user.userId, 
+          }))
+          .sort((a, b) => new Date(b.created) - new Date(a.created));
         setFollowings(sorted);
       }
     });
-    
   }, [id]);
 
 

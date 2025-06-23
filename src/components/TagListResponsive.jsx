@@ -30,13 +30,13 @@ const TagListResponsive = ({ tags = [], toLink = () => "#", className = "" }) =>
 
   return (
     <div ref={containerRef} className={`flex flex-wrap gap-1 ${className}`}>
-      {visibleTags.map((tag, i) => (
+      {visibleTags.map((tag) => (
         <Link
           key={tag.id}
           to={toLink(tag)}
-          className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap hover:bg-blue-200"
           title={tag.name}
           onClick={(e) => e.stopPropagation()}
+          className="inline-block truncate max-w-[80px] px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 overflow-hidden whitespace-nowrap"
         >
           {tag.name}
         </Link>

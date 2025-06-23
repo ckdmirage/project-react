@@ -1,10 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchArtworkById, deleteArtwork } from "../api/artworkApi";
-import { fetchUserInfo } from "../api/userApi"; // ✅ 別忘記引入這個
+import { fetchUserInfo } from "../api/userApi"; // 
 import LikeButton from "../components/LikeButton";
 import TagList from "../components/TagList";
 import UserCard from "../components/UserCard";
+import FavouriteButton from "../components/FavouriteButton";
 
 const ArtworkDetailPage = () => {
   const { id } = useParams();
@@ -73,7 +74,18 @@ const ArtworkDetailPage = () => {
             alt={artwork.title}
             className="w-full max-w-xl mx-auto mb-4 rounded"
           />
-
+          <div className="mt-3 mb-3 flex justify-end items-center gap-4">
+            <LikeButton
+              artworkId={artwork.id}
+              authorId={author?.id}
+              initialLikeCount={artwork.likes}
+              initialLiked={artwork.likedByCurrentUser}
+            />
+            <FavouriteButton
+              artworkId={artwork.id}
+              token={token}
+            />
+          </div>
           <p className="mb-1">
             <strong>作者：</strong>
             {author ? (
@@ -93,9 +105,8 @@ const ArtworkDetailPage = () => {
             {new Date(artwork.uploaded).toLocaleString()}
           </p>
 
-          <div className="mt-3 mb-3">
-            <LikeButton artworkId={artwork.id} authorId={author?.id} />
-          </div>
+
+
 
           <div className="mb-2">
             <strong>標籤：</strong>

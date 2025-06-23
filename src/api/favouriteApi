@@ -1,0 +1,63 @@
+import axios from "axios";
+const API_BASE = "http://localhost:8081";
+
+/**
+ * 新增收藏
+ * @param {number} artworkId 
+ * @param {string} token 
+ */
+export const addFavourite = (artworkId, token) => {
+  return axios.post(`${API_BASE}/favourite/${artworkId}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+};
+
+/**
+ * 取消收藏
+ * @param {number} artworkId 
+ * @param {string} token 
+ */
+export const removeFavourite = (artworkId, token) => {
+  return axios.delete(`${API_BASE}/favourite/${artworkId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+};
+
+/**
+ * 查詢是否已收藏
+ * @param {number} artworkId 
+ * @param {string} token 
+ */
+export const hasFavourited = (artworkId, token) => {
+  return axios.get(`${API_BASE}/favourite/${artworkId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+};
+
+/**
+ * 取得我的收藏作品（支援排序）
+ * @param {string} token 
+ * @param {"newest"|"oldest"|"liked"} sort 
+ */
+// ✅ 正確順序：sort 放前、token 放最後
+export const fetchMyFavourites = (sort = "newest", token) => {
+  return axios.get(`${API_BASE}/favourite/my`, {
+    params: { sort },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+};
+
+
+

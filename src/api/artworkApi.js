@@ -2,7 +2,21 @@ import axios from "axios";
 
 const API_BASE = "http://localhost:8081";
 
-// 獲取所有作品     無須用戶身分
+// 上傳作品
+export const uploadArtwork = (formData, token) => {
+  return axios.post(`${API_BASE}/artwork/upload`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    withCredentials: true,
+  });
+};
+
+/**
+ * 獲取所有作品（無需登入）
+ * @param {string} sort - 排序方式，如 "newest", "oldest", "likes"
+ */
 export const fetchAllArtworks = (sort = "newest") => {
   return axios.get(`${API_BASE}/artwork`, {
     params: { sort },
@@ -11,14 +25,15 @@ export const fetchAllArtworks = (sort = "newest") => {
 };
 
 /**
- * 根據用戶 ID 獲取該用戶的作品集
- * @param {string | number} userId
- * @param {string} token
+ * 根據用戶 ID 獲取該用戶的作品集（支援排序）
+ * @param {string|number} userId
+ * @param {string} sort - 排序方式，如 "newest", "oldest", "likes"
+ * @param {string|null} token - Bearer token
  */
-export const fetchArtworksByUser = (userId, token, sort = "newest") => {
+export const fetchArtworksByUser = (userId, sort = "newest", token = null) => {
   const config = {
     params: { sort },
-    withCredentials: !!token, // 有 token 才設為 true
+    withCredentials: !!token,
   };
 
   if (token) {
@@ -29,8 +44,9 @@ export const fetchArtworksByUser = (userId, token, sort = "newest") => {
 };
 
 /**
- * 根據標籤名稱獲取作品集
+ * 根據標籤名稱獲取作品集（支援排序）
  * @param {string} tagName
+ * @param {string} sort - 排序方式，如 "newest", "oldest", "likes"
  */
 export const fetchArtworksByTag = (tagName, sort = "newest") => {
   return axios.get(`${API_BASE}/artwork/tag/${tagName}`, {
@@ -40,12 +56,19 @@ export const fetchArtworksByTag = (tagName, sort = "newest") => {
 };
 
 /**
- * 取得單一作品詳細資料
+ * 取得單一作品詳細資料（無需登入）
  * @param {string|number} artworkId
- * @param {string} token
+ * @param {string|null} token
  */
-export const fetchArtworkById = (artworkId, token) => {
-  return axios.get(`${API_BASE}/artwork/${artworkId}`);
+export const fetchArtworkById = (artworkId, token = null) => {
+  const config = token
+    ? {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      }
+    : {};
+
+  return axios.get(`${API_BASE}/artwork/${artworkId}`, config);
 };
 
 /**

@@ -1,12 +1,11 @@
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { uploadArtwork } from '../api/artworkApi'; // <-- 確保路徑正確
 
 const UploadArtwork = () => {
-  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [title, setTitle] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
   const [searchResult, setSearchResult] = useState([]);
@@ -21,9 +20,8 @@ const UploadArtwork = () => {
       })
         .then(res => {
           const resultList = Array.isArray(res.data.data) ? res.data.data : [];
-          // 過濾已選擇過的標籤
           const filtered = resultList.filter(tag => !selectedTags.some(t => t.id === tag.id));
-          setSearchResult(filtered);  
+          setSearchResult(filtered);
         })
         .catch(err => {
           console.error("搜尋標籤失敗", err);
@@ -34,61 +32,38 @@ const UploadArtwork = () => {
     }
   }, [tagInput, selectedTags]);
 
-
   const handleAddTag = () => {
     const name = tagInput.trim();
     if (!name || selectedTags.some(tag => tag.name === name)) {
       alert("標籤重複或為空");
       return;
     }
-    // 記錄為尚未存在後端的暫時 tag（id 設 null）
     setSelectedTags([...selectedTags, { id: null, name }]);
     setTagInput('');
   };
 
-  // 選擇已有標籤
   const handleSelectTag = (tag) => {
     setSelectedTags([...selectedTags, tag]);
-    // 搜索結果中移除該 tag
     setSearchResult(searchResult.filter(t => t.id !== tag.id));
   };
 
-  // 移除已選擇標籤
   const handleRemoveTag = (tag) => {
     setSelectedTags(selectedTags.filter(t => t.name !== tag.name));
   };
 
-  // 選擇圖片並上傳
-  const handleFileChange = async (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    try {
-      // 呼叫圖片上傳接口
-      const res = await axios.post('/api/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data', 
-          'Authorization': `Bearer ${token}`
-        },
-         withCredentials: true 
-      });
-      setImageUrl(res.data.data.url);
-      setImagePreview(res.data.data.url);
-    } catch (err) {
-      alert("圖片上傳失敗");
-    }
-    setUploading(false);
+    setSelectedFile(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
-
-
-  //送出整個作品
   const handleSubmit = async () => {
-    if (!title.trim() || !imageUrl) {
-      alert("標題和圖片都必填");
+    if (!title.trim() || !selectedFile) {
+      alert("標題和圖片為必填");
       return;
     }
+
     const newTags = selectedTags.filter(tag => tag.id === null);
     const existingTagIds = selectedTags.filter(tag => tag.id !== null).map(t => t.id);
     const createdTags = [];
@@ -107,39 +82,49 @@ const UploadArtwork = () => {
 
     const dto = {
       title,
-      imageUrl,
       tagIds: [...existingTagIds, ...createdTags],
+      newTagnames: newTags.map(t => t.name)
     };
 
-    axios.post("/artwork/upload", dto, {
-      headers: { Authorization: `Bearer ${token}` },
-      withCredentials: true,
-    }).then(() => {
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("artwork", new Blob([JSON.stringify(dto)], {
+      type: "application/json"
+    }));
+
+    try {
+      await uploadArtwork(formData, token);
       alert("上傳成功");
       setTitle('');
-      setImageUrl('');
+      setSelectedFile(null);
+      setImagePreview('');
       setSelectedTags([]);
-    });
+    } catch (err) {
+      console.error("上傳作品失敗", err);
+      alert("上傳失敗");
+    }
   };
 
   return (
     <div className="p-4 space-y-4 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold">上傳作品</h1>
 
-      <input type="text" placeholder="標題" className="w-full p-2 border" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <input
+        type="text"
+        placeholder="標題"
+        className="w-full p-2 border"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
 
-      {/* 圖片上傳 */}
       <div className="w-full p-2 border">
-        <input type="file" accept='image/*' onChange={handleFileChange} disabled={uploading} />
-        {uploading && <p className="text-blue-500">圖片上傳中...</p>}
+        <input type="file" accept='image/*' onChange={handleFileChange} />
         {imagePreview && (
           <div>
             <img src={imagePreview} alt="預覽圖" className="max-h-48 rounded shadow" />
-            <p className="text-xs text-gray-500 break-all">{imageUrl}</p>
           </div>
         )}
       </div>
-
 
       <div>
         <h2 className="font-bold">已選擇標籤：</h2>
@@ -152,7 +137,13 @@ const UploadArtwork = () => {
         </div>
       </div>
 
-      <input type="text" placeholder="搜尋或新增標籤" className="w-full p-2 border" value={tagInput} onChange={(e) => setTagInput(e.target.value)} />
+      <input
+        type="text"
+        placeholder="搜尋或新增標籤"
+        className="w-full p-2 border"
+        value={tagInput}
+        onChange={(e) => setTagInput(e.target.value)}
+      />
       <div className="flex gap-2">
         <button onClick={handleAddTag} className="px-4 py-1 bg-green-500 text-white rounded">新增標籤</button>
       </div>
