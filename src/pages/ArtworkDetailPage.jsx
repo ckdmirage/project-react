@@ -1,7 +1,6 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchArtworkById, deleteArtwork } from "../api/artworkApi";
-import { fetchUserInfo } from "../api/userApi"; // 
 import LikeButton from "../components/LikeButton";
 import TagList from "../components/TagList";
 import UserCard from "../components/UserCard";
@@ -9,15 +8,15 @@ import FavouriteButton from "../components/FavouriteButton";
 
 const ArtworkDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [artwork, setArtwork] = useState(null);
-  const [authorFull, setAuthorFull] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
   const token = userCert?.token;
 
-  // ✅ 初次載入 artwork
+  // ✅ 載入作品詳情
   useEffect(() => {
     fetchArtworkById(id, token)
       .then((res) => {
@@ -30,27 +29,13 @@ const ArtworkDetailPage = () => {
       });
   }, [id, token]);
 
-  // ✅ 根據 artwork.author.id 再載入完整作者資料
-  useEffect(() => {
-    if (artwork?.author?.id) {
-      fetchUserInfo(artwork.author.id, token)
-        .then((res) => {
-          setAuthorFull(res.data.data);
-        })
-        .catch(() => {
-          console.warn("作者資料補充失敗");
-          setAuthorFull(null);
-        });
-    }
-  }, [artwork, token]);
-
   const handleDelete = async () => {
     if (!window.confirm("確定要刪除這個作品嗎？")) return;
 
     try {
       await deleteArtwork(artwork.id, token);
       alert("刪除成功");
-      // 可選導回首頁或其他頁
+      navigate("/"); // ✅ 導回首頁
     } catch (err) {
       alert(err?.response?.data?.message || "刪除失敗");
     }
@@ -59,8 +44,6 @@ const ArtworkDetailPage = () => {
   if (loading) return <div className="p-4">載入中...</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
   if (!artwork) return <div className="p-4">沒有找到作品</div>;
-
-  const author = authorFull || artwork.author;
 
   return (
     <div className="container p-4">
@@ -74,26 +57,25 @@ const ArtworkDetailPage = () => {
             alt={artwork.title}
             className="w-full max-w-xl mx-auto mb-4 rounded"
           />
+
           <div className="mt-3 mb-3 flex justify-end items-center gap-4">
             <LikeButton
               artworkId={artwork.id}
-              authorId={author?.id}
+              authorId={artwork.author?.id}
               initialLikeCount={artwork.likes}
               initialLiked={artwork.likedByCurrentUser}
             />
-            <FavouriteButton
-              artworkId={artwork.id}
-              token={token}
-            />
+            <FavouriteButton artworkId={artwork.id} token={token} />
           </div>
+
           <p className="mb-1">
             <strong>作者：</strong>
-            {author ? (
+            {artwork.author ? (
               <Link
-                to={`/user/homepage/${author.id}`}
+                to={`/user/homepage/${artwork.author.id}`}
                 className="text-blue-600 hover:underline"
               >
-                {author.username}
+                {artwork.author.username}
               </Link>
             ) : (
               <span className="text-gray-500">未知作者</span>
@@ -105,15 +87,13 @@ const ArtworkDetailPage = () => {
             {new Date(artwork.uploaded).toLocaleString()}
           </p>
 
-
-
-
           <div className="mb-2">
             <strong>標籤：</strong>
             <TagList tags={artwork.tagDtos} />
           </div>
 
-          {userCert?.userId === author?.id && (
+          {/* ✅ 僅作者本人可見刪除按鈕 */}
+          {userCert?.userId === artwork.author?.id && (
             <div className="mt-6">
               <button
                 onClick={handleDelete}
@@ -127,7 +107,7 @@ const ArtworkDetailPage = () => {
 
         {/* 右側：作者小卡片 */}
         <div>
-          <UserCard user={author} />
+          <UserCard user={artwork.author} />
         </div>
       </div>
     </div>

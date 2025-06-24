@@ -10,9 +10,13 @@ const UserCard = ({ user }) => {
     <div className="bg-white shadow rounded-xl p-4 w-full space-y-4">
       <div className="flex items-center space-x-4">
         <img
-          src="/default-avatar.png" // ✅ 直接用預設圖
+          src={user.avatarUrl}
           alt="avatar"
           className="w-14 h-14 rounded-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/default-avatar.png"; // 如果圖片載入失敗，退回用預設圖
+          }}
         />
         <div>
           <p className="text-lg font-bold text-gray-800">{user.username}</p>

@@ -76,10 +76,26 @@ const UserPage = () => {
       <div className="w-full mx-auto p-6 bg-white shadow rounded-xl">
         {isSelf ? (
           <>
-            <h2 className="text-2xl font-bold mb-4">我的主頁</h2>
-            <div className="mb-2"><strong>用戶 ID：</strong>{user.id}</div>
-            <div className="mb-2"><strong>信箱：</strong>{user.email}</div>
-            <div className="mb-2"><strong>加入時間：</strong>{getDuration(user.created)}</div>
+            <div className="flex items-center space-x-6 mb-6">
+              <img
+                src={user.avatarUrl}
+                alt="avatar"
+                className="w-28 h-28 rounded-full object-cover shadow"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/default-avatar.png";
+                }}
+              />
+
+              {/* 右側資料 */}
+              <div>
+                <h2 className="text-2xl font-bold mb-4">我的主頁</h2>
+                <div className="mb-2"><strong>用戶 ID：</strong>{user.id}</div>
+                <div className="mb-2"><strong>信箱：</strong>{user.email}</div>
+                <div className="mb-2"><strong>加入時間：</strong>{getDuration(user.created)}</div>
+              </div>
+            </div>
+
 
             <div className="my-4 p-4 bg-sky-100 rounded">
               <p className="font-medium text-sky-700">這是你的個人主頁，可在此管理收藏、草稿與帳號設定。</p>
@@ -98,44 +114,59 @@ const UserPage = () => {
               )}
             </div>
             <div className="mt-8">
-              
-                <div className="mt-12">
-                  <ArtworkList
-                    fetchFunction={fetchMyFavourites}
-                    fetchArgs={[]}
-                    withToken={true}
-                    title="我的收藏"
-                  />
-                </div>
-              
+
+              <div className="mt-12">
+                <ArtworkList
+                  fetchFunction={fetchMyFavourites}
+                  fetchArgs={[]}
+                  withToken={true}
+                  title="我的收藏"
+                />
+              </div>
+
             </div>
           </>
         ) : (
           <>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold">{user.username}</h2>
-              <FollowButton targetUserId={user.id} />
+            <div className="flex items-center space-x-6 mb-6">
+              {/* 頭像（可用更大尺寸） */}
+              <img
+                src={user.avatarUrl}
+                alt="avatar"
+                className="w-28 h-28 rounded-full object-cover shadow"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/default-avatar.png";
+                }}
+              />
+
+              {/* 用戶資訊與按鈕 */}
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold">{user.username}</h2>
+                  <FollowButton targetUserId={user.id} />
+                </div>
+
+                <div className="mb-2 text-gray-700">
+                  <Link
+                    to={`/user/follow/${user.id}?tab=followers`}
+                    className="text-blue-600 hover:underline mr-4"
+                  >
+                    {followCounts.following} 人已追蹤
+                  </Link>
+                  <Link
+                    to={`/user/follow/${user.id}?tab=following`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    他的追蹤: {followCounts.follower === 0 ? '無' : followCounts.follower}
+                  </Link>
+                </div>
+
+                <div className="mb-2"><strong>信箱：</strong>{user.email}</div>
+                <div className="mb-2"><strong>加入時間：</strong>{getDuration(user.created)}</div>
+              </div>
             </div>
 
-            <div className="mb-2 text-gray-700">
-              <Link
-                to={`/user/follow/${user.id}?tab=followers`}
-                className="text-blue-600 hover:underline mr-4"
-              >
-                {followCounts.following} 人已追蹤
-              </Link>
-              <Link
-                to={`/user/follow/${user.id}?tab=following`}
-                className="text-blue-600 hover:underline"
-              >
-                他的追蹤: {followCounts.follower === 0 ? '無' : followCounts.follower}
-              </Link>
-            </div>
-
-
-
-            <div className="mb-2"><strong>信箱：</strong>{user.email}</div>
-            <div className="mb-2"><strong>加入時間：</strong>{getDuration(user.created)}</div>
 
             <div className="mt-8">
               {artworks.length === 0 ? (
