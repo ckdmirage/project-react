@@ -2,25 +2,28 @@ import { useEffect, useState } from "react";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { addFavourite, removeFavourite, hasFavourited } from "../api/favouriteApi";
 
-const FavouriteButton = ({ artworkId, token }) => {
+const FavouriteButton = ({ artworkId, authorId, token }) => {
+  const userCert = JSON.parse(sessionStorage.getItem("userCert"));
   const [favourited, setFavourited] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!token) return;
     hasFavourited(artworkId, token)
-      .then(res => {
-        setFavourited(res.data);
-      })
-      .catch(err => {
-        console.error("查詢收藏狀態失敗", err);
-      });
+      .then(res => setFavourited(res.data))
+      .catch(err => console.error("查詢收藏狀態失敗", err));
   }, [artworkId, token]);
 
   const handleClick = async () => {
     if (!token || loading) return;
-    setLoading(true);
 
+    // 🔒 檢查是否為自己的作品
+    if (userCert?.userId === authorId) {
+      alert("無法收藏自己的作品！");
+      return;
+    }
+
+    setLoading(true);
     try {
       if (favourited) {
         await removeFavourite(artworkId, token);
@@ -46,5 +49,4 @@ const FavouriteButton = ({ artworkId, token }) => {
     </button>
   );
 };
-
 export default FavouriteButton;

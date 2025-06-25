@@ -1,4 +1,4 @@
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchArtworkById, deleteArtwork } from "../api/artworkApi";
 import LikeButton from "../components/LikeButton";
@@ -65,22 +65,8 @@ const ArtworkDetailPage = () => {
               initialLikeCount={artwork.likes}
               initialLiked={artwork.likedByCurrentUser}
             />
-            <FavouriteButton artworkId={artwork.id} token={token} />
+            <FavouriteButton artworkId={artwork.id} authorId={artwork.author?.id} token={token} />
           </div>
-
-          <p className="mb-1">
-            <strong>作者：</strong>
-            {artwork.author ? (
-              <Link
-                to={`/user/homepage/${artwork.author.id}`}
-                className="text-blue-600 hover:underline"
-              >
-                {artwork.author.username}
-              </Link>
-            ) : (
-              <span className="text-gray-500">未知作者</span>
-            )}
-          </p>
 
           <p className="mb-1">
             <strong>上傳時間：</strong>

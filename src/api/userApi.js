@@ -31,9 +31,76 @@ export const fetchUserInfo = async (userId, token) => {
 };
 
 
-// ✅ 郵箱驗證
+// 註冊-郵箱驗證
 export const verifyUser = async (token) => {
-  return await axios.get(`${API_BASE}/user/verify`, {
+  return await axios.get(`${API_BASE}/user/verify/register`, {
+    params: { token },
+    withCredentials: true,
+  });
+};
+
+// 修改用戶名
+export const updateUsername = async (username, token) => {
+  return await axios.put(
+    `${API_BASE}/user/upload/name`,
+    { username },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    }
+  );
+};
+
+// 修改頭像
+export const updateAvatar = async (file, token) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return await axios.post(`${API_BASE}/user/upload/avatar`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+    withCredentials: true,
+  });
+};
+
+// 修改郵箱
+export const requestEmailChange = async (newEmail, token) => {
+  return await axios.post(
+    `${API_BASE}/user/upload/email`,
+    { newEmail },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    }
+  );
+};
+
+// 修改-郵箱驗證
+export const verifyEmailChange = async (token) => {
+  return await axios.get(`${API_BASE}/user/verify/email`, {
+    params: { token },
+    withCredentials: true,
+  });
+};
+
+// 修改密碼
+export const requestPasswordChange = async (passwordData, token) => {
+  return await axios.post("http://localhost:8081/user/upload/password", passwordData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+};
+
+// // 修改-密碼驗證
+export const verifyPasswordChange = async (token) => {
+  return await axios.get("http://localhost:8081/user/verify/password", {
     params: { token },
     withCredentials: true,
   });

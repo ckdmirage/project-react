@@ -35,7 +35,6 @@ const ArtworkList = ({
     fetchFunction(...fetchArgs, sortType, token)//token, sortType, ...fetchArgs
       .then((res) => {
         const fetched = res.data?.data || [];
-        console.log("✅ fetched: ", fetched.map(a => `${a.title} ❤️${a.likes}`));
         setArtworks(fetched);
       })
       .catch((err) => {
