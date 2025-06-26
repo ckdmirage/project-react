@@ -13,6 +13,7 @@ import UserPage from "./pages/UserPage";
 import TagArtworkPage from "./pages/TagArtworkPage";
 import SearchResultPage from "./pages/SearchResultPage";
 import UserFollowPage from "./pages/UserFollowPage";
+import VerifyResultPage from "./pages/VerifyResultPage";
 
 const App = () => {
   return (
@@ -46,11 +47,11 @@ const App = () => {
           {/* 已完成 搜索頁 */}
           <Route path="/search" element={<SearchResultPage />} />
 
-          {/* 未完成 追蹤粉絲頁 */}
+          {/* 已完成 追蹤粉絲頁 */}
           <Route path="/user/follow/:id" element={<UserFollowPage />} />
 
-
-         
+          {/* 驗證信頁 */}
+         <Route path="/verify/result" element={<VerifyResultPage />} />
 
           {/* 兜底路由 */}
           <Route path="*" element={<Navigate to="/" replace />} />

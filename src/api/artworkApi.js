@@ -77,6 +77,7 @@ export const fetchArtworkById = (artworkId, token = null) => {
  * @param {string} token
  */
 export const deleteArtwork = (artworkId, token) => {
+   console.log("🚨 DELETE TOKEN =", token);
   return axios.delete(`${API_BASE}/artwork/${artworkId}`, {
     headers: { Authorization: `Bearer ${token}` },
     withCredentials: true,

@@ -31,7 +31,7 @@ const ArtworkDetailPage = () => {
 
   const handleDelete = async () => {
     if (!window.confirm("確定要刪除這個作品嗎？")) return;
-
+    console.log("🚀 deleteArtwork", artwork.id, token);
     try {
       await deleteArtwork(artwork.id, token);
       alert("刪除成功");

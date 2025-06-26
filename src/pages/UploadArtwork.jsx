@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { uploadArtwork } from '../api/artworkApi'; // <-- 確保路徑正確
+import { useNavigate } from "react-router-dom";
 
 const UploadArtwork = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -11,6 +12,7 @@ const UploadArtwork = () => {
   const [searchResult, setSearchResult] = useState([]);
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
   const token = userCert?.token;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (tagInput.trim()) {
@@ -99,6 +101,7 @@ const UploadArtwork = () => {
       setSelectedFile(null);
       setImagePreview('');
       setSelectedTags([]);
+      navigate("/"); 
     } catch (err) {
       console.error("上傳作品失敗", err);
       alert("上傳失敗");

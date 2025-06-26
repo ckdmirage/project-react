@@ -15,7 +15,10 @@ const FavouriteButton = ({ artworkId, authorId, token }) => {
   }, [artworkId, token]);
 
   const handleClick = async () => {
-    if (!token || loading) return;
+   if (!token) {
+    alert("請先登入才能收藏作品！");
+    return;
+  }
 
     // 🔒 檢查是否為自己的作品
     if (userCert?.userId === authorId) {
