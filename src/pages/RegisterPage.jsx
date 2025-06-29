@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { registerUser } from "../api/userApi";
 import { useNavigate } from "react-router-dom";
 
@@ -13,6 +13,13 @@ const RegisterPage = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const userCert = sessionStorage.getItem("userCert");
+    if (userCert) {
+      alert("當前已有賬號登入，請先登出再註冊");
+      navigate("/");
+    }
+  }, [navigate]);
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };

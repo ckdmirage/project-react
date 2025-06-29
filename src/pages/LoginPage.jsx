@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/userApi";
 
@@ -11,24 +11,31 @@ const LoginPage = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const userCert = sessionStorage.getItem("userCert");
+    if (userCert) {
+      alert("當前已有賬號登入，請先登出再登入");
+      navigate("/");
+    }
+  }, [navigate]);
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await loginUser(form);
-    const result = response.data;
+    e.preventDefault();
+    try {
+      const response = await loginUser(form);
+      const result = response.data;
 
-    sessionStorage.setItem("userCert", JSON.stringify(result.data));
-    setMessage(result.message);
-    navigate("/");
-  } catch (err) {
-    console.error("錯誤:", err);
-    setMessage(err.response?.data?.message || "帳號或密碼錯誤");
-  }
-};
+      sessionStorage.setItem("userCert", JSON.stringify(result.data));
+      setMessage(result.message);
+      navigate("/");
+    } catch (err) {
+      console.error("錯誤:", err);
+      setMessage(err.response?.data?.message || "帳號或密碼錯誤");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-sky-blue flex items-center justify-center">

@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchArtworkById, deleteArtwork } from "../api/artworkApi";
-import LikeButton from "../components/LikeButton";
-import TagList from "../components/TagList";
+import LikeButton from "../components/Button/LikeButton";
+import TagList from "../components/List/TagList";
 import UserCard from "../components/UserCard";
-import FavouriteButton from "../components/FavouriteButton";
+import FavouriteButton from "../components/Button/FavouriteButton";
+import ReportButton from "../components/Button/ReportButton";
 
 const ArtworkDetailPage = () => {
   const { id } = useParams();
@@ -16,7 +17,6 @@ const ArtworkDetailPage = () => {
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
   const token = userCert?.token;
 
-  // ✅ 載入作品詳情
   useEffect(() => {
     fetchArtworkById(id, token)
       .then((res) => {
@@ -35,11 +35,24 @@ const ArtworkDetailPage = () => {
     try {
       await deleteArtwork(artwork.id, token);
       alert("刪除成功");
-      navigate("/"); // ✅ 導回首頁
+      navigate(`/user/${userCert.userId}`);
     } catch (err) {
       alert(err?.response?.data?.message || "刪除失敗");
     }
   };
+
+  // ✅ 是否顯示刪除按鈕：作者或管理員
+  const canDelete =
+    artwork &&
+    userCert &&
+    (userCert.userId === artwork.author?.id || userCert.role === "ADMIN");
+
+  // ✅ 是否顯示檢舉按鈕：不是作者且不是管理員
+  const showReportButton =
+    artwork &&
+    userCert &&
+    userCert.userId !== artwork.author?.id &&
+    userCert.role !== "ADMIN";
 
   if (loading) return <div className="p-4">載入中...</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
@@ -65,7 +78,12 @@ const ArtworkDetailPage = () => {
               initialLikeCount={artwork.likes}
               initialLiked={artwork.likedByCurrentUser}
             />
-            <FavouriteButton artworkId={artwork.id} authorId={artwork.author?.id} token={token} />
+            <FavouriteButton
+              artworkId={artwork.id}
+              authorId={artwork.author?.id}
+              token={token}
+            />
+            {showReportButton && <ReportButton artworkId={artwork.id} />}
           </div>
 
           <p className="mb-1">
@@ -78,8 +96,8 @@ const ArtworkDetailPage = () => {
             <TagList tags={artwork.tagDtos} />
           </div>
 
-          {/* ✅ 僅作者本人可見刪除按鈕 */}
-          {userCert?.userId === artwork.author?.id && (
+          {/* ✅ 作者或管理員都可見刪除按鈕 */}
+          {canDelete && (
             <div className="mt-6">
               <button
                 onClick={handleDelete}

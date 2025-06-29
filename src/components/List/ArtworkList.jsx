@@ -1,7 +1,7 @@
-import ArtworkCard from "./ArtworkCard";
-import SortSelector from "./SortSelector";
-import usePagination from "../hooks/usePagination";
-import useResponsiveItemsPerPage from "../hooks/useResponsiveItemsPerPage";
+import ArtworkCard from "../ArtworkCard";
+import SortSelector from "../SortSelector";
+import usePagination from "../../hooks/usePagination";
+import useResponsiveItemsPerPage from "../../hooks/useResponsiveItemsPerPage";
 import { useEffect, useState } from "react";
 
 const ArtworkList = ({

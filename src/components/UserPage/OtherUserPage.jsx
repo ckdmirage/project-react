@@ -4,8 +4,8 @@ import { fetchArtworksByUser } from "../../api/artworkApi";
 import { getFollowCounts } from "../../api/followApi";
 import { getDuration } from "../../utils/dateUtils";
 import { Link } from "react-router-dom";
-import FollowButton from "../FollowButton";
-import ArtworkList from "../ArtworkList";
+import FollowButton from "../Button/FollowButton";
+import ArtworkList from "../List/ArtworkList";
 
 const OtherUserPage = ({ userId }) => {
   const [user, setUser] = useState(null);

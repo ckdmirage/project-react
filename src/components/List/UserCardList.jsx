@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import UserCard from "./UserCard";
+import UserCard from "../UserCard";
 
 const UserCardList = ({ users = [] }) => {
     const ITEMS_PER_PAGE = 5;

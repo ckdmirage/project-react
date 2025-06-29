@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchAllArtworks } from "../api/artworkApi";
-import ArtworkList from "../components/ArtworkList"; // ✅ 集成組件
+import ArtworkList from "../components/List/ArtworkList"; // ✅ 集成組件
 
 const HomePage = () => {
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
@@ -13,8 +13,6 @@ const HomePage = () => {
   return (
     <div className="container page-bg p-4">
       <h1 className="text-2xl font-bold mb-4">主頁</h1>
-      {!userCert && <p>請登入以使用更多功能</p>}
-
       <ArtworkList fetchFunction={fetchAllArtworks} title="所有作品" />
     </div>
   );

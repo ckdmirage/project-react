@@ -2,7 +2,7 @@ import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getUserFollowers, getUserFollowings } from "../api/followApi";
 import { fetchUserInfo } from "../api/userApi";
-import UserCardList from "../components/UserCardList";
+import UserCardList from "../components/List/UserCardList";
 
 const UserFollowPage = () => {
   const { id } = useParams();

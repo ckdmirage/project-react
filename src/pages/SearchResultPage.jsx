@@ -1,9 +1,9 @@
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { searchUsers, searchArtworks, searchTags } from "../api/searchApi";
-import TagList from "../components/TagList";
-import ArtworkList from "../components/ArtworkList";
-import UserCardList from "../components/UserCardList";
+import TagList from "../components/List/TagList";
+import ArtworkList from "../components/List/ArtworkList";
+import UserCardList from "../components/List/UserCardList";
 
 const SearchResultPage = () => {
   const [params] = useSearchParams();

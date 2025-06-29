@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { hasFollowed, followUser, unfollowUser } from "../api/followApi";
+import { hasFollowed, followUser, unfollowUser } from "../../api/followApi";
 
 
 const FollowList = ({ users, title = "關注列表", mode = "card" }) => {

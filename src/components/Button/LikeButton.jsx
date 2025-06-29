@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { hasLiked, likeArtwork, unlikeArtwork } from "../api/likeApi";
+import { hasLiked, likeArtwork, unlikeArtwork } from "../../api/likeApi";
 
 const LikeButton = ({ artworkId, authorId, initialLikeCount = 0 }) => {
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));

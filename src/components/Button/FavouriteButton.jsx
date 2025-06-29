@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaStar, FaRegStar } from "react-icons/fa";
-import { addFavourite, removeFavourite, hasFavourited } from "../api/favouriteApi";
+import { addFavourite, removeFavourite, hasFavourited } from "../../api/favouriteApi";
 
 const FavouriteButton = ({ artworkId, authorId, token }) => {
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
@@ -17,7 +17,7 @@ const FavouriteButton = ({ artworkId, authorId, token }) => {
   const handleClick = async () => {
     if (!token || loading) return;
 
-    // 🔒 檢查是否為自己的作品
+
     if (userCert?.userId === authorId) {
       alert("無法收藏自己的作品！");
       return;

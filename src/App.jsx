@@ -13,14 +13,17 @@ import UserPage from "./pages/UserPage";
 import TagArtworkPage from "./pages/TagArtworkPage";
 import SearchResultPage from "./pages/SearchResultPage";
 import UserFollowPage from "./pages/UserFollowPage";
+import VerifyResultPage from "./pages/VerifyResultPage";
+import AdminPage from "./pages/AdminPage";
+import NotificationPage from "./pages/NotificationPage";
 
 const App = () => {
   return (
     <div>
       {/* <div className="bg-blue-500 text-white p-4">Tailwind OK!</div> */}
-      
+
       <Router>
-         <Navbar /> 
+        <Navbar />
         <Routes>
           {/* 主頁 */}
           <Route path="/" element={<HomePage />} />
@@ -46,11 +49,17 @@ const App = () => {
           {/* 已完成 搜索頁 */}
           <Route path="/search" element={<SearchResultPage />} />
 
-          {/* 未完成 追蹤粉絲頁 */}
+          {/* 已完成 追蹤粉絲頁 */}
           <Route path="/user/follow/:id" element={<UserFollowPage />} />
 
+          {/* 驗證信頁 */}
+          <Route path="/verify/result" element={<VerifyResultPage />} />
 
-         
+          {/* 管理者頁面 */}
+          <Route path="/admin/report" element={<AdminPage />} />
+
+          {/* 消息通知頁面 */}
+          <Route path="/notifications" element={<NotificationPage />} />
 
           {/* 兜底路由 */}
           <Route path="*" element={<Navigate to="/" replace />} />

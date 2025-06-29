@@ -32,12 +32,13 @@ export const fetchUserInfo = async (userId, token) => {
 
 
 // 註冊-郵箱驗證
-export const verifyUser = async (token) => {
-  return await axios.get(`${API_BASE}/user/verify/register`, {
-    params: { token },
-    withCredentials: true,
-  });
-};
+export const verifyUser = (token) =>
+  handleApiResponse(() =>
+    axios.get(`${API_BASE}/user/verify/register`, {
+      params: { token },
+      withCredentials: true,
+    })
+  );
 
 // 修改用戶名
 export const updateUsername = async (username, token) => {
@@ -81,12 +82,13 @@ export const requestEmailChange = async (newEmail, token) => {
 };
 
 // 修改-郵箱驗證
-export const verifyEmailChange = async (token) => {
-  return await axios.get(`${API_BASE}/user/verify/email`, {
-    params: { token },
-    withCredentials: true,
-  });
-};
+export const verifyEmailChange = (token) =>
+  handleApiResponse(() =>
+    axios.get(`${API_BASE}/user/verify/email`, {
+      params: { token },
+      withCredentials: true,
+    })
+  );
 
 // 修改密碼
 export const requestPasswordChange = async (passwordData, token) => {
@@ -98,10 +100,22 @@ export const requestPasswordChange = async (passwordData, token) => {
   });
 };
 
-// // 修改-密碼驗證
-export const verifyPasswordChange = async (token) => {
-  return await axios.get("http://localhost:8081/user/verify/password", {
-    params: { token },
-    withCredentials: true,
-  });
+// 修改-密碼驗證
+export const verifyPasswordChange = (token) =>
+  handleApiResponse(() =>
+    axios.get(`${API_BASE}/user/verify/password`, {
+      params: { token },
+      withCredentials: true,
+    })
+  );
+
+// 錯誤管理
+const handleApiResponse = async (apiCall) => {
+  try {
+    const res = await apiCall();
+    return res.data; // ApiResponse 物件
+  } catch (err) {
+    const message = err.response?.data?.message || "伺服器錯誤";
+    throw new Error(message); // 拋出標準錯誤
+  }
 };

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import LikeButton from "./LikeButton";
+import LikeButton from "./Button/LikeButton";
 import TagListResponsive from "./TagListResponsive";
 
 const ArtworkCard = ({ artwork, likeCount }) => {

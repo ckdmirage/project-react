@@ -4,7 +4,7 @@ import { fetchUserInfo, updateAvatar } from "../../api/userApi";
 import { fetchArtworksByUser } from "../../api/artworkApi";
 import { getFollowCounts } from "../../api/followApi";
 import { getDuration } from "../../utils/dateUtils";
-import ArtworkList from "../ArtworkList";
+import ArtworkList from "../List/ArtworkList";
 import { fetchMyFavourites } from "../../api/favouriteApi";
 import AccountSettings from './AccountSetting';
 const MyPage = ({ userId }) => {

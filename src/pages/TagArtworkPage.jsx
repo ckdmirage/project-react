@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import ArtworkList from "../components/ArtworkList";
+import ArtworkList from "../components/List/ArtworkList";
 import { fetchArtworksByTag } from "../api/artworkApi";
 
 const TagArtworkPage = () => {

@@ -31,8 +31,8 @@ const AccountSettings = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2 text-sm font-medium ${activeTab === tab
-                  ? "bg-mist-blue text-blue-600"
-                  : "bg-transparent text-gray-600 hover:text-blue-500"
+                  ? "bg-mist-blue"
+                  : "bg-transparent text-gray-600 hover:text-blue-400"
                   } border border-r-0 last:border-r rounded-none`}
               >
                 {tab === "username" ? "用戶名稱" : tab === "email" ? "郵箱" : "密碼"}

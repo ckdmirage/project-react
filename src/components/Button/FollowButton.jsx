@@ -3,7 +3,7 @@ import {
   followUser,
   unfollowUser,
   hasFollowed,
-} from "../api/followApi";
+} from "../../api/followApi";
 
 const FollowButton = ({ targetUserId }) => {
   const [isFollowing, setIsFollowing] = useState(false);
