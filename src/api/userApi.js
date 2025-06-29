@@ -2,21 +2,21 @@ import axios from "axios";
 
 const API_BASE = "http://localhost:8081";
 
-// ✅ 註冊
+// 註冊
 export const registerUser = async (userData) => {
   return await axios.post(`${API_BASE}/user/register`, userData, {
     withCredentials: true,
   });
 };
 
-// ✅ 登入
+// 登入
 export const loginUser = async (loginData) => {
   return await axios.post(`${API_BASE}/user/login`, loginData, {
     withCredentials: true,
   });
 };
 
-// ✅ 取得個人主頁資訊
+// 取得個人主頁資訊
 export const fetchUserInfo = async (userId, token) => {
   if (token) {
     return axios.get(`${API_BASE}/user/homepage/${userId}`, {
@@ -113,9 +113,9 @@ export const verifyPasswordChange = (token) =>
 const handleApiResponse = async (apiCall) => {
   try {
     const res = await apiCall();
-    return res.data; // ApiResponse 物件
+    return res.data;
   } catch (err) {
     const message = err.response?.data?.message || "伺服器錯誤";
-    throw new Error(message); // 拋出標準錯誤
+    throw new Error(message);
   }
 };

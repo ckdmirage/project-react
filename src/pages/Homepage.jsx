@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchAllArtworks } from "../api/artworkApi";
-import ArtworkList from "../components/List/ArtworkList"; // ✅ 集成組件
+import ArtworkList from "../components/List/ArtworkList"; 
 
 const HomePage = () => {
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));

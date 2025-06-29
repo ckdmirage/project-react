@@ -115,7 +115,7 @@ const MyPage = ({ userId }) => {
         </div>
 
         <div className="my-4 p-4 rounded">
-          <AccountSettings />  {/* ✅ 帳號設定區塊插進來 */}
+          <AccountSettings />
         </div>
 
         <div className="mt-8">

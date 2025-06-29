@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/userApi";
@@ -18,6 +17,7 @@ const LoginPage = () => {
       navigate("/");
     }
   }, [navigate]);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -32,11 +32,14 @@ const LoginPage = () => {
       setMessage(result.message);
       navigate("/");
     } catch (err) {
-      console.error("錯誤:", err);
-      setMessage(err.response?.data?.message || "帳號或密碼錯誤");
+      const backendMsg = err.response?.data?.message || "帳號或密碼錯誤";
+      console.error("登入錯誤:", backendMsg);
+      if (backendMsg.includes("封鎖") || backendMsg.includes("ban")) {
+        alert(backendMsg);
+      }
+      setMessage(backendMsg);
     }
   };
-
   return (
     <div className="min-h-screen bg-sky-blue flex items-center justify-center">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm">

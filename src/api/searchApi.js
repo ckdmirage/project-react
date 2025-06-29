@@ -1,10 +1,8 @@
-// src/api/searchApi.js
-
 import axios from "axios";
 
 const BASE_URL = "http://localhost:8081/search";
 
-// 共用的 axios 寫法，保留 credentials（與 session/cookie 有關）
+// 共用的 axios 寫法，保留 credentials
 const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
@@ -38,7 +36,7 @@ export const searchArtworks = async (keyword, sort = "newest", token = null) => 
       },
     }),
   };
-  return axios.get(`${BASE_URL}/artwork`, config); // 不要解構 data
+  return axios.get(`${BASE_URL}/artwork`, config);
 };
 
 

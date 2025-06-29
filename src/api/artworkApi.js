@@ -15,7 +15,7 @@ export const uploadArtwork = (formData, token) => {
 
 /**
  * 獲取所有作品（無需登入）
- * @param {string} sort - 排序方式，如 "newest", "oldest", "likes"
+ * @param {string} sort - 排序方式， "newest", "oldest", "likes"
  */
 export const fetchAllArtworks = (sort = "newest") => {
   return axios.get(`${API_BASE}/artwork`, {
@@ -63,9 +63,9 @@ export const fetchArtworksByTag = (tagName, sort = "newest") => {
 export const fetchArtworkById = (artworkId, token = null) => {
   const config = token
     ? {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      }
+      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
+    }
     : {};
 
   return axios.get(`${API_BASE}/artwork/${artworkId}`, config);

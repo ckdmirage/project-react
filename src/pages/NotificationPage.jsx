@@ -17,7 +17,6 @@ const NotificationPage = () => {
   const handleMarkAsRead = async (id) => {
     try {
       await markAsRead(id, userCert.token);
-      // 前端本地更新為已讀（不必重新打 API）
       setNotifications((prev) =>
         prev.map((n) =>
           n.id === id ? { ...n, readAt: new Date().toISOString() } : n

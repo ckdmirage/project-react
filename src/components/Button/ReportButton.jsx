@@ -6,17 +6,16 @@ import { checkReported } from "../../api/reportApi";
 const ReportButton = ({ isSelf, artworkId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasReported, setHasReported] = useState(false);
-
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
   const token = userCert?.token;
 
   useEffect(() => {
     if (!isSelf && token) {
-      checkReported(artworkId, token).then(setHasReported).catch(() => {});
+      checkReported(artworkId, token).then(setHasReported).catch(() => { });
     }
   }, [artworkId, token, isSelf]);
 
-  // ✅ 自己或已檢舉者不顯示按鈕
+  // 自己或已檢舉者不顯示按鈕
   if (isSelf || hasReported) return null;
 
   return (
@@ -33,7 +32,7 @@ const ReportButton = ({ isSelf, artworkId }) => {
         <ReportModal
           artworkId={artworkId}
           onClose={() => setIsOpen(false)}
-          onSubmitSuccess={() => setHasReported(true)} // ✅ 加這行
+          onSubmitSuccess={() => setHasReported(true)}
         />
       )}
     </>

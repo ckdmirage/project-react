@@ -102,8 +102,8 @@ const FollowList = ({ users, title = "關注列表", mode = "card" }) => {
                   <button
                     variant="outline"
                     className={`transition-colors duration-300 ${followStatus[user.id]
-                        ? "bg-green-100 text-green-700 hover:bg-red-100 hover:text-red-600"
-                        : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                      ? "bg-green-100 text-green-700 hover:bg-red-100 hover:text-red-600"
+                      : "bg-blue-100 text-blue-700 hover:bg-blue-200"
                       }`}
                     onClick={() => handleFollowToggle(user.id, followStatus[user.id])}
                     onMouseEnter={(e) => {

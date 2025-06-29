@@ -4,7 +4,7 @@ import axios from "axios";
 export const reportArtwork = async (artworkId, reason, token) => {
   const res = await axios.post(
     `/report/${artworkId}`,
-    { reason }, // 這裡符合你的 DTO 要求
+    { reason },
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -23,5 +23,5 @@ export const checkReported = async (artworkId, token) => {
     },
     withCredentials: true,
   });
-  return res.data.data; // ✅ 這裡回傳的是 boolean
+  return res.data.data;
 };

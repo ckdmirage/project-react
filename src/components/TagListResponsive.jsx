@@ -11,12 +11,10 @@ const TagListResponsive = ({ tags = [], toLink = () => "#", className = "" }) =>
     const resize = () => {
       const containerWidth = containerRef.current.offsetWidth;
 
-      // 🧠 預估每個標籤最大寬度（你可以根據實際設計調整）
       const avgTagWidth = 80;
       const gap = 4;
       const maxTags = Math.floor((containerWidth + gap) / (avgTagWidth + gap));
 
-      // 🧠 至少顯示 1 個，預留空間給 "..."
       setVisibleCount(tags.length > maxTags ? Math.max(1, maxTags - 1) : tags.length);
     };
 

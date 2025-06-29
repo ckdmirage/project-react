@@ -17,8 +17,7 @@ const ArtworkList = ({
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-
-}, [artworks]);
+  }, [artworks]);
   useEffect(() => {
     if (providedArtworks) {
       setArtworks(providedArtworks);
@@ -69,7 +68,7 @@ const ArtworkList = ({
               <ArtworkCard
                 key={artwork.id}
                 artwork={artwork}
-                likeCount={artwork.likes ?? 0} // ✅ 不再從 likeCounts map 拿，而是直接用 artwork.likes
+                likeCount={artwork.likes ?? 0}
               />
             ))}
           </div>
@@ -81,8 +80,8 @@ const ArtworkList = ({
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
                   className={`px-3 py-1 rounded border ${currentPage === i + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-gray-800"
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-800"
                     }`}
                 >
                   {i + 1}

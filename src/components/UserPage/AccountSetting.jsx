@@ -100,7 +100,7 @@ const AccountSettings = () => {
                   const token = JSON.parse(sessionStorage.getItem("userCert"))?.token;
 
                   try {
-                    if (activeTab === "username") { // 修改名字
+                    if (activeTab === "username") {
                       const currentUsername = JSON.parse(sessionStorage.getItem("userCert"))?.username;
                       if (username === currentUsername) {
                         alert("❌ 請輸入新的名字");
@@ -108,11 +108,11 @@ const AccountSettings = () => {
                       }
                       const res = await updateUsername(username, token);
                       const updatedCert = res.data.data;
-                      // 更新 sessionStorage
+
                       sessionStorage.setItem("userCert", JSON.stringify(updatedCert));
                       alert("用戶名稱修改成功");
                       window.location.reload();
-                    } else if (activeTab === "email") { // 修改郵箱
+                    } else if (activeTab === "email") {
                       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                       if (!email) {
                         alert("❌ 郵箱不得為空");
@@ -134,7 +134,7 @@ const AccountSettings = () => {
                       } catch (err) {
                         alert("❌ 發送失敗：" + (err.response?.data?.message || err.message));
                       }
-                    } else if (activeTab === "password") {  // 密碼修改
+                    } else if (activeTab === "password") {
                       if (!password || !confirmPassword) {
                         alert("❌ 密碼不得為空");
                         return;

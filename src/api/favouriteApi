@@ -48,7 +48,6 @@ export const hasFavourited = (artworkId, token) => {
  * @param {string} token 
  * @param {"newest"|"oldest"|"liked"} sort 
  */
-// ✅ 正確順序：sort 放前、token 放最後
 export const fetchMyFavourites = (sort = "newest", token) => {
   return axios.get(`${API_BASE}/favourite/my`, {
     params: { sort },

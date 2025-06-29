@@ -17,12 +17,10 @@ const FavouriteButton = ({ artworkId, authorId, token }) => {
   const handleClick = async () => {
     if (!token || loading) return;
 
-
     if (userCert?.userId === authorId) {
       alert("無法收藏自己的作品！");
       return;
     }
-
     setLoading(true);
     try {
       if (favourited) {

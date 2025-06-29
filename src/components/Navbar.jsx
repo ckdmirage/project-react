@@ -54,7 +54,7 @@ const Navbar = () => {
           </button>
         )}
 
-        {userCert?.role === "ADMIN" && (
+        {(userCert?.role === "ROOT" || userCert?.role === "ADMIN") && (
           <button className="hover:text-hover-sky" onClick={() => handleNavigate("/admin/report")}>
             管理介面
           </button>
@@ -79,7 +79,7 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            {userCert.role !== "ADMIN" && (
+            {userCert.role !== "ROOT" && (
               <button
                 className="relative hover:text-hover-sky"
                 onClick={() => handleNavigate("/notifications")}

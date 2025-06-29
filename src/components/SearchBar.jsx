@@ -1,5 +1,3 @@
-// 搜索實作
-// components/SearchBar.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +7,7 @@ const SearchBar = () => {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && keyword.trim()) {
-      // 導向自訂的搜尋結果頁
+
       navigate(`/search?keyword=${encodeURIComponent(keyword.trim())}`);
     }
   };

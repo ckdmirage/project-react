@@ -15,7 +15,7 @@ const UserCard = ({ user }) => {
           className="w-14 h-14 rounded-full object-cover"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = "/default-avatar.png"; // 如果圖片載入失敗，退回用預設圖
+            e.target.src = "/default-avatar.png"; // 圖片載入失敗用預設圖
           }}
         />
         <div>

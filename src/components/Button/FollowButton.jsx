@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  followUser,
-  unfollowUser,
-  hasFollowed,
-} from "../../api/followApi";
+import { followUser, unfollowUser, hasFollowed, } from "../../api/followApi";
 
 const FollowButton = ({ targetUserId }) => {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -15,7 +11,7 @@ const FollowButton = ({ targetUserId }) => {
   const token = userCert?.token;
   const currentUserId = userCert?.userId;
 
-  // ✅ 自己不能追蹤自己
+  // 不能追蹤自己
   if (targetUserId === currentUserId) return null;
 
   useEffect(() => {
@@ -33,7 +29,6 @@ const FollowButton = ({ targetUserId }) => {
         setLoading(false);
       }
     };
-
     if (token) {
       checkFollowStatus();
     } else {
@@ -46,7 +41,6 @@ const FollowButton = ({ targetUserId }) => {
       alert("請先登入才能追蹤他人！");
       return;
     }
-
     setActionPending(true);
     try {
       let res;
@@ -55,7 +49,6 @@ const FollowButton = ({ targetUserId }) => {
       } else {
         res = await followUser(targetUserId, token);
       }
-
       if (res.status === 200 && typeof res.data === "boolean") {
         setIsFollowing(res.data);
       } else {
@@ -68,21 +61,17 @@ const FollowButton = ({ targetUserId }) => {
       setActionPending(false);
     }
   };
-
   if (loading) return null;
-
   const btnText = isFollowing
     ? hovering
       ? "取消追蹤"
       : "追蹤中"
     : "追蹤";
-
   const baseClass = "px-4 py-1 rounded font-semibold transition duration-200";
   const followClass = "bg-sky-500 text-white hover:bg-sky-600";
   const followingClass = hovering
     ? "bg-red-500 text-white"
     : "bg-gray-300 text-gray-700";
-
   return (
     <button
       onClick={handleClick}

@@ -5,7 +5,6 @@ import { reportArtwork } from "../../api/reportApi";
 const ReportModal = ({ artworkId, onClose, onSubmitSuccess }) => {
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
-
   const userCert = JSON.parse(sessionStorage.getItem("userCert"));
   const token = userCert?.token;
 
@@ -14,21 +13,19 @@ const ReportModal = ({ artworkId, onClose, onSubmitSuccess }) => {
       alert("請輸入檢舉原因");
       return;
     }
-
     setLoading(true);
     try {
       await reportArtwork(artworkId, reason, token);
       alert("檢舉已送出，感謝您的協助！");
       setReason("");
-      onSubmitSuccess?.(); // 通知父元件檢舉成功
-      onClose(); // 關閉 modal
+      onSubmitSuccess?.();
+      onClose();
     } catch (err) {
       alert(err?.response?.data?.message || "檢舉失敗，請稍後再試");
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">

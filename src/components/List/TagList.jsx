@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const TagList= ({ tags = [] }) => {
+const TagList = ({ tags = [] }) => {
   if (!tags.length) {
     return <p className="text-gray-500 text-sm">沒有符合的標籤</p>;
   }
