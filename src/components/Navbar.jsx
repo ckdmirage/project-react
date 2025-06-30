@@ -56,7 +56,7 @@ const Navbar = () => {
 
         {(userCert?.role === "ROOT" || userCert?.role === "ADMIN") && (
           <button className="hover:text-hover-sky" onClick={() => handleNavigate("/admin/report")}>
-            管理介面
+            後台管理
           </button>
         )}
       </div>
