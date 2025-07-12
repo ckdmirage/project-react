@@ -17,7 +17,6 @@ const SearchResultPage = () => {
 
     searchUsers(keyword).then(setUsers);
     searchTags(keyword).then(setTags);
-    // ❌ 不再在這裡 fetch artworks，由 ArtworkList 自己根據 keyword 和 sort 處理
   }, [keyword]);
 
   return (
@@ -38,13 +37,17 @@ const SearchResultPage = () => {
 
       {/* 作品區塊 - 傳 fetchFunction 和 fetchArgs */}
       <section className="mb-8">
-        <ArtworkList
-          title="作品"
-          fetchFunction={searchArtworks}
-          fetchArgs={[keyword]} // ✅ 這樣就可以
-        />
-
+        {keyword.trim() ? (
+          <ArtworkList
+            title="作品"
+            fetchFunction={searchArtworks}
+            fetchArgs={{ keyword }}
+          />
+        ) : (
+          <p className="text-gray-500 text-sm">請輸入關鍵字以搜尋作品</p>
+        )}
       </section>
+
 
       {/* 標籤區塊 */}
       <section className="mb-8 bg-sky-blue p-6 rounded-lg shadow-md">

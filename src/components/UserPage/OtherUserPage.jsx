@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { fetchUserInfo } from "../../api/userApi";
 import { fetchArtworksByUser } from "../../api/artworkApi";
@@ -8,8 +9,9 @@ import FollowButton from "../Button/FollowButton";
 import ArtworkList from "../List/ArtworkList";
 
 const OtherUserPage = ({ userId }) => {
+  
+
   const [user, setUser] = useState(null);
-  const [artworks, setArtworks] = useState([]);
   const [followCounts, setFollowCounts] = useState({ follower: 0, following: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -19,9 +21,6 @@ const OtherUserPage = ({ userId }) => {
       try {
         const userRes = await fetchUserInfo(userId);
         setUser(userRes.data.data);
-
-        const artworksRes = await fetchArtworksByUser(userId);
-        setArtworks(artworksRes.data.data || []);
 
         const followCountRes = await getFollowCounts(userId);
         const rawCounts = followCountRes.data;
@@ -57,7 +56,6 @@ const OtherUserPage = ({ userId }) => {
               e.target.src = "/default-avatar.png";
             }}
           />
-
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold">{user.username}</h2>
@@ -85,15 +83,11 @@ const OtherUserPage = ({ userId }) => {
         </div>
 
         <div className="mt-8">
-          {artworks.length === 0 ? (
-            <div className="text-gray-500 italic">該用戶尚未發布任何作品</div>
-          ) : (
-            <ArtworkList
-              fetchFunction={fetchArtworksByUser}
-              fetchArgs={[userId]}
-              title={`${user.username} 的作品集`}
-            />
-          )}
+          <ArtworkList
+            fetchFunction={fetchArtworksByUser}
+            fetchArgs={{ userId }} // ✅ 正確傳參
+            title={`${user.username} 的作品集`}
+          />
         </div>
       </div>
     </div>

@@ -17,9 +17,9 @@ export const uploadArtwork = (formData, token) => {
  * 獲取所有作品（無需登入）
  * @param {string} sort - 排序方式， "newest", "oldest", "likes"
  */
-export const fetchAllArtworks = (sort = "newest") => {
+export const fetchAllArtworks = ({ page = 0, size = 12, sort = "uploaded,desc" }) => {
   return axios.get(`${API_BASE}/artwork`, {
-    params: { sort },
+    params: { page, size, sort },
     withCredentials: false,
   });
 };
@@ -30,16 +30,17 @@ export const fetchAllArtworks = (sort = "newest") => {
  * @param {string} sort - 排序方式，如 "newest", "oldest", "likes"
  * @param {string|null} token - Bearer token
  */
-export const fetchArtworksByUser = (userId, sort = "newest", token = null) => {
+export const fetchArtworksByUser = ({ userId, page = 0, size = 12, sort = "uploaded,desc", token = null }) => {
+  if (!userId) {
+    throw new Error("fetchArtworksByUser: userId is required");
+  }
   const config = {
-    params: { sort },
+    params: { page, size, sort },
     withCredentials: !!token,
   };
-
   if (token) {
     config.headers = { Authorization: `Bearer ${token}` };
   }
-
   return axios.get(`${API_BASE}/artwork/user/${userId}`, config);
 };
 
@@ -48,9 +49,9 @@ export const fetchArtworksByUser = (userId, sort = "newest", token = null) => {
  * @param {string} tagName
  * @param {string} sort - 排序方式，如 "newest", "oldest", "likes"
  */
-export const fetchArtworksByTag = (tagName, sort = "newest") => {
+export const fetchArtworksByTag = ({ tagName, page = 0, size = 12, sort = "uploaded,desc" }) => {
   return axios.get(`${API_BASE}/artwork/tag/${tagName}`, {
-    params: { sort },
+    params: { page, size, sort },
     withCredentials: false,
   });
 };

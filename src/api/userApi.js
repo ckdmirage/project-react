@@ -23,7 +23,7 @@ export const fetchUserInfo = async (userId, token) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      withCredentials: true,
+ 
     });
   } else {
     return axios.get(`${API_BASE}/user/homepage/${userId}`);

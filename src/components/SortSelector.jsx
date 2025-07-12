@@ -8,9 +8,9 @@ const SortSelector = ({ sortOption, onChange }) => {
         onChange={(e) => onChange(e.target.value)}
         className="px-2 py-1 border rounded"
       >
-        <option value="newest">由新到舊</option>
-        <option value="oldest">由舊到新</option>
-        <option value="mostLiked">點讚最多</option>
+        <option value="uploaded,desc">由新到舊</option>
+        <option value="uploaded,asc">由舊到新</option>
+        <option value="likes,desc">點讚最多</option>
       </select>
     </div>
   );

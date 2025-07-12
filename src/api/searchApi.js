@@ -26,16 +26,15 @@ export const searchUsers = async (keyword) => {
  * @param {string|null} token
  * @returns {Promise<ArtworkDisplayDto[]>}
  */
-export const searchArtworks = async (keyword, sort = "newest", token = null) => {
+export const searchArtworks = ({ keyword, page = 0, size = 12, sort = "uploaded,desc", token = null }) => {
   const config = {
-    params: { keyword, sort },
+    params: { keyword, page, size, sort },
     withCredentials: true,
-    ...(token && {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }),
   };
+  if (token) {
+    config.headers = { Authorization: `Bearer ${token}` };
+  }
+  console.log("🔥 searchArtworks received keyword:", keyword);
   return axios.get(`${BASE_URL}/artwork`, config);
 };
 
