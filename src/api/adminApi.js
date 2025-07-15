@@ -20,9 +20,10 @@ export const rejectReport = (reportId, token) =>
     withCredentials: true,
   });
 
-  //用戶權限管理
-  export const fetchAllUsers = (token) =>
+//用戶權限管理
+export const fetchAllUsers = ({ token, page = 0, size = 10, sort = "created,desc" }) =>
   axios.get("/admin/user/list", {
+    params: { page, size, sort },
     headers: { Authorization: `Bearer ${token}` },
     withCredentials: true,
   });

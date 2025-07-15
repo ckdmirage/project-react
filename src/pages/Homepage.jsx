@@ -1,14 +1,7 @@
-import { useEffect, useState } from "react";
 import { fetchAllArtworks } from "../api/artworkApi";
 import ArtworkList from "../components/List/ArtworkList"; 
 
 const HomePage = () => {
-  const userCert = JSON.parse(sessionStorage.getItem("userCert"));
-  const [artworks, setArtworks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-
 
   return (
     <div className="container page-bg p-4">

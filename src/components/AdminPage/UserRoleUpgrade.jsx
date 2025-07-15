@@ -7,20 +7,30 @@ const UserRoleUpgrade = ({ token, userCert }) => {
   const [roleSelections, setRoleSelections] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    if (!token) return;
-    fetchAllUsers(token)
-      .then((res) => {
-        const userList = Array.isArray(res.data.data) ? res.data.data : [];
-        setUsers(userList);
-        const initialRoles = {};
-        userList.forEach((u) => (initialRoles[u.userId] = u.role));
-        setRoleSelections(initialRoles);
-      })
-      .catch((e) => alert("取得用戶失敗：" + e.message))
-      .finally(() => setLoading(false));
-  }, [token]);
+  if (!token) return;
+  setLoading(true);
+
+  fetchAllUsers({ token, page, size: 10, sort: "created,desc" })
+    .then((res) => {
+      const pageData = res.data?.data;
+      const userList = Array.isArray(pageData?.content) ? pageData.content : [];
+
+      setUsers(userList);                         
+      setTotalPages(pageData?.totalPages || 1);   
+      setPage(pageData?.number || 0);             
+
+      const initialRoles = {};
+      userList.forEach((u) => (initialRoles[u.userId] = u.role));
+      setRoleSelections(initialRoles);
+    })
+    .catch((e) => alert("取得用戶失敗：" + e.message))
+    .finally(() => setLoading(false));
+}, [token, page]);
+
 
   const handleRoleChange = async (id, newRole) => {
     if (!window.confirm(`確定要將用戶設為 ${newRole} 嗎？`)) return;
@@ -93,6 +103,25 @@ const UserRoleUpgrade = ({ token, userCert }) => {
             ))}
         </tbody>
       </table>
+      <div className="flex justify-center items-center gap-4 mt-4">
+        <button
+          onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+          disabled={page === 0}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          上一頁
+        </button>
+        <span>
+          第 <strong>{page + 1}</strong> 頁 / 共 <strong>{totalPages}</strong> 頁
+        </span>
+        <button
+          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
+          disabled={page >= totalPages - 1}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          下一頁
+        </button>
+      </div>
     </div>
   );
 };
